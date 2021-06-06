@@ -9,9 +9,11 @@ using AndroidX.AppCompat.App;
 using AndroidX.AppCompat.Widget;
 using AndroidX.Core.View;
 using AndroidX.DrawerLayout.Widget;
+using AndroidX.Fragment.App;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.Navigation;
 using Google.Android.Material.Snackbar;
+using TooGoodToGoNotifierAndroidApp.Fragments;
 
 namespace TooGoodToGoNotifierAndroidApp
 {
@@ -26,6 +28,8 @@ namespace TooGoodToGoNotifierAndroidApp
             Toolbar toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
 
+            InitFragment();
+
             FloatingActionButton fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
             fab.Click += FabOnClick;
 
@@ -36,6 +40,15 @@ namespace TooGoodToGoNotifierAndroidApp
 
             NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
             navigationView.SetNavigationItemSelectedListener(this);
+
+            
+        }
+
+        private void InitFragment()
+        {
+            var transaction = SupportFragmentManager.BeginTransaction();
+            transaction.Add(Resource.Id.fragment_container, new Fragment1(), "Fragment1");
+            transaction.Commit();
         }
 
         public override void OnBackPressed()
