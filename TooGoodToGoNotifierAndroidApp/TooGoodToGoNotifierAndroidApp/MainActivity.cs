@@ -99,10 +99,6 @@ namespace TooGoodToGoNotifierAndroidApp
             else if (id == Resource.Id.nav_gallery)
             {
                 Log.Debug("TooGoodToGoNotifierApp", "Clicked on nav gallery");
-                var intent = new Intent(this, typeof(ProductsActivity));
-
-                // Start the activity
-                StartActivity(intent);
             }
             else if (id == Resource.Id.nav_slideshow)
             {
