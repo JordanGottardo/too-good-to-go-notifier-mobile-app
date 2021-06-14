@@ -24,6 +24,7 @@ namespace TooGoodToGoNotifierAndroidApp
 
         private ProductsFragment _productFragment;
         private SettingsFragment _settingsFragment;
+        private GrpcProductsMonitor _grpcProductsMonitor;
 
         #endregion
 
@@ -36,6 +37,7 @@ namespace TooGoodToGoNotifierAndroidApp
             SetSupportActionBar(toolbar);
 
             InitFragments();
+            InitProductsMonitoring();
 
             FloatingActionButton fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
             fab.Click += FabOnClick;
@@ -160,6 +162,13 @@ namespace TooGoodToGoNotifierAndroidApp
             var view = (View)sender;
             Snackbar.Make(view, "Replace with your own action", Snackbar.LengthLong)
                 .SetAction("Action", (View.IOnClickListener)null).Show();
+        }
+
+        private void InitProductsMonitoring()
+        {
+            _grpcProductsMonitor = new GrpcProductsMonitor();
+
+            _grpcProductsMonitor.StartMonitoring();
         }
         #endregion
     }
