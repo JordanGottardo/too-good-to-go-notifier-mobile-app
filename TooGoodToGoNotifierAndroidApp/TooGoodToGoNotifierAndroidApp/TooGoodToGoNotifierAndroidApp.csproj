@@ -67,6 +67,7 @@
     <Compile Include="Fragments\SettingsFragment.cs" />
     <Compile Include="GrpcProductsMonitor.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="ProductService.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

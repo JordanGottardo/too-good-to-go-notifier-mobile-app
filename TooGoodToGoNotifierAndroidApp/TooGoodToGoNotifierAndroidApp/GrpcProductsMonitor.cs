@@ -7,6 +7,12 @@ namespace TooGoodToGoNotifierAndroidApp
 {
     internal class GrpcProductsMonitor
     {
+        #region Events
+
+        public event EventHandler<ProductResponseEventArgs> NewProductAvailable;
+
+        #endregion
+
         public void StartMonitoring()
         {
             Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} running StartMonitoring");
@@ -27,6 +33,8 @@ namespace TooGoodToGoNotifierAndroidApp
                         Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} StartMonitoring " +
                                                      $"Product ID = {call.ResponseStream.Current.Id}" +
                                                      $"Price = {call.ResponseStream.Current.Price}");
+
+                        OnNewProductAvailable(ToProductResponseEventArgs(call.ResponseStream.Current));
                     }
                 }
                 catch (Exception e)
@@ -36,5 +44,41 @@ namespace TooGoodToGoNotifierAndroidApp
                 }
             });
         }
+
+        #region Utility Methods
+
+        private static ProductResponseEventArgs ToProductResponseEventArgs(ProductResponse productResponse)
+        {
+            return new ProductResponseEventArgs
+            {
+                Id = productResponse.Id,
+                Price = GetPrice(productResponse),
+                StoreName = productResponse.Store.Name
+            };
+        }
+
+        private static decimal GetPrice(ProductResponse productResponse)
+        {
+            var price = productResponse.Price.ToString();
+            return decimal.Parse(price.Insert(price.Length - productResponse.Decimals, "."));
+        }
+
+        protected virtual void OnNewProductAvailable(ProductResponseEventArgs e)
+        {
+            NewProductAvailable?.Invoke(this, e);
+        }
+
+        #endregion
     }
+
+    #region Event Args
+
+    internal class ProductResponseEventArgs : EventArgs
+    {
+        public string Id { get; set; }
+        public decimal Price { get; set; }
+        public string StoreName { get; set; }
+    }
+
+    #endregion
 }

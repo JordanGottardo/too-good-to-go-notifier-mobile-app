@@ -1,5 +1,6 @@
 ﻿using System;
 using Android.App;
+using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Util;
@@ -24,8 +25,7 @@ namespace TooGoodToGoNotifierAndroidApp
 
         private ProductsFragment _productFragment;
         private SettingsFragment _settingsFragment;
-        private GrpcProductsMonitor _grpcProductsMonitor;
-
+        
         #endregion
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -37,6 +37,7 @@ namespace TooGoodToGoNotifierAndroidApp
             SetSupportActionBar(toolbar);
 
             InitFragments();
+            CreateNotificationChannel();
             InitProductsMonitoring();
 
             FloatingActionButton fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
@@ -166,9 +167,30 @@ namespace TooGoodToGoNotifierAndroidApp
 
         private void InitProductsMonitoring()
         {
-            _grpcProductsMonitor = new GrpcProductsMonitor();
+            var productIntent = new Intent(this, typeof(ProductService));
+            
+            StartService(productIntent);
+        }
 
-            _grpcProductsMonitor.StartMonitoring();
+        void CreateNotificationChannel()
+        {
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+            {
+                // Notification channels are new in API 26 (and not a part of the
+                // support library). There is no need to create a notification
+                // channel on older versions of Android.
+                return;
+            }
+
+            var name = Resources.GetString(Resource.String.notification_channel_name);
+            var description = GetString(Resource.String.notification_channel_description);
+            var channel = new NotificationChannel(Constants.ChannelId, name, NotificationImportance.Default)
+            {
+                Description = description
+            };
+
+            var notificationManager = (NotificationManager)GetSystemService(NotificationService);
+            notificationManager.CreateNotificationChannel(channel);
         }
         #endregion
     }
