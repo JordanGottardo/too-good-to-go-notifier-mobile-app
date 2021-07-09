@@ -1,12 +1,21 @@
 syntax = "proto3";
 
 service ProductsManager {
-	rpc GetProducts (ProductRequest) returns (stream ProductResponse) {}
+	rpc GetProducts (ProductRequest) returns (stream ProductServerMessage) {}
 }
 
 message ProductRequest {
 	string user = 1;
 }
+
+message ProductServerMessage {
+	oneof message {
+		KeepAlive keepAlive = 1;
+		ProductResponse productResponse = 2;
+	}
+}
+ 
+message KeepAlive {}
 
 message ProductResponse {
 	string id = 1;
