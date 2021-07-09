@@ -30,11 +30,20 @@ namespace TooGoodToGoNotifierAndroidApp
                     using var call = client.GetProducts(request);
                     while (await call.ResponseStream.MoveNext())
                     {
-                        Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} StartMonitoring " +
-                                                     $"Product ID = {call.ResponseStream.Current.Id}" +
-                                                     $"Price = {call.ResponseStream.Current.Price}");
+                        var serverMessage = call.ResponseStream.Current;
+                        if (serverMessage.MessageCase == ProductServerMessage.MessageOneofCase.KeepAlive)
+                        {
+                            Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} StartMonitoring keep alive received");
+                        }
+                        else
+                        {
+                            var productResponse = serverMessage.ProductResponse;
+                            Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} StartMonitoring " +
+                                                         $"Product ID = {productResponse.Id}" +
+                                                         $"Price = {productResponse.Price}");
 
-                        OnNewProductAvailable(ToProductResponseEventArgs(call.ResponseStream.Current));
+                            OnNewProductAvailable(ToProductResponseEventArgs(productResponse));
+                        }
                     }
                 }
                 catch (Exception e)
