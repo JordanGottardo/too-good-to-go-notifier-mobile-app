@@ -33,12 +33,29 @@ namespace TooGoodToGoNotifierAndroidApp
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-            Log.Debug(Constants.AppName, "OnStartCommands");
+            Log.Debug(Constants.AppName, "OnStartCommand");
 
             _productsMonitor.NewProductAvailable += ProductsMonitorOnNewProductAvailable;
             _productsMonitor.StartMonitoring();
 
+            //Task.Run(() =>
+            //{
+            //    Thread.Sleep(long.Parse(TimeSpan.FromSeconds(30).TotalMilliseconds.ToString(CultureInfo.InvariantCulture)));
+            //    Log.Debug(Constants.AppName, "Invoking OnDestroy");
+            //    OnDestroy();
+            //});
+
             return StartCommandResult.Sticky;
+        }
+
+        public override void OnDestroy()
+        {
+            Log.Debug(Constants.AppName, "OnDestroy");
+
+            _productsMonitor.NewProductAvailable -= ProductsMonitorOnNewProductAvailable;
+            _productsMonitor.StopMonitoring();
+
+            base.OnDestroy();
         }
 
         #region Utility Methods

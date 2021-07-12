@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Android.Util;
 using Grpc.Core;
@@ -7,6 +8,25 @@ namespace TooGoodToGoNotifierAndroidApp
 {
     internal class GrpcProductsMonitor
     {
+        #region Private fields
+
+        private readonly CancellationToken _cancellationToken;
+        private readonly CancellationTokenSource _cancellationTokenSource;
+
+        #endregion
+
+        #region Initialization
+
+        public GrpcProductsMonitor()
+        {
+            Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} constructor");
+
+            _cancellationTokenSource = new CancellationTokenSource();
+            _cancellationToken = _cancellationTokenSource.Token;
+        }
+
+        #endregion
+
         #region Events
 
         public event EventHandler<ProductResponseEventArgs> NewProductAvailable;
@@ -28,7 +48,8 @@ namespace TooGoodToGoNotifierAndroidApp
                         User = "User1"
                     };
                     using var call = client.GetProducts(request);
-                    while (await call.ResponseStream.MoveNext())
+
+                    while (await call.ResponseStream.MoveNext(_cancellationToken))
                     {
                         var serverMessage = call.ResponseStream.Current;
                         if (serverMessage.MessageCase == ProductServerMessage.MessageOneofCase.KeepAlive)
@@ -46,12 +67,23 @@ namespace TooGoodToGoNotifierAndroidApp
                         }
                     }
                 }
+                catch (RpcException e)
+                {
+                    Log.Error(Constants.AppName, $"{nameof(GrpcProductsMonitor)} RpcError while reading channel {e}");
+                }
                 catch (Exception e)
                 {
-                    Log.Error(Constants.AppName, $"{nameof(GrpcProductsMonitor)} StartMonitoring error while reading channel {e}");
+                    Log.Error(Constants.AppName, $"{nameof(GrpcProductsMonitor)} Unknown error while reading channel {e}");
                     throw;
                 }
             });
+        }
+
+        public void StopMonitoring()
+        {
+            Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} StopMonitoring");
+
+            _cancellationTokenSource.Cancel();
         }
 
         #region Utility Methods
