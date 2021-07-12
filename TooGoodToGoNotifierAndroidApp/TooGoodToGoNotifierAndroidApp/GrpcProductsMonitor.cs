@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using Android.Util;
@@ -6,12 +8,18 @@ using Grpc.Core;
 
 namespace TooGoodToGoNotifierAndroidApp
 {
+    [SuppressMessage("ReSharper", "MethodSupportsCancellation")]
+    [SuppressMessage("ReSharper", "ClassWithVirtualMembersNeverInherited.Global")]
     internal class GrpcProductsMonitor
     {
         #region Private fields
 
-        private readonly CancellationToken _cancellationToken;
-        private readonly CancellationTokenSource _cancellationTokenSource;
+        private CancellationToken _cancellationToken;
+        private CancellationTokenSource _cancellationTokenSource;
+        private readonly ProductsManager.ProductsManagerClient _productsManagerClient;
+        private readonly object _channelLock;
+        private bool _monitoringStarted;
+        private static readonly TimeSpan ChannelRetryInterval = TimeSpan.FromSeconds(30);
 
         #endregion
 
@@ -21,8 +29,9 @@ namespace TooGoodToGoNotifierAndroidApp
         {
             Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} constructor");
 
-            _cancellationTokenSource = new CancellationTokenSource();
-            _cancellationToken = _cancellationTokenSource.Token;
+            var channel = new Channel("too-good-to-go-cloud-notifier.jordangottardo.com", 50051, new SslCredentials());
+            _productsManagerClient = new ProductsManager.ProductsManagerClient(channel);
+            _channelLock = new object();
         }
 
         #endregion
@@ -35,58 +44,81 @@ namespace TooGoodToGoNotifierAndroidApp
 
         public void StartMonitoring()
         {
-            Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} running StartMonitoring");
-
-            Task.Run(async () =>
+            lock (_channelLock)
             {
-                try
+                Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} running StartMonitoring");
+
+                if (_monitoringStarted)
                 {
-                    var channel = new Channel("too-good-to-go-cloud-notifier.jordangottardo.com", 50051, new SslCredentials());
-                    var client = new ProductsManager.ProductsManagerClient(channel);
-                    var request = new ProductRequest
-                    {
-                        User = "User1"
-                    };
-                    using var call = client.GetProducts(request);
+                    Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} monitoring has already started. Returning");
+                    return;
+                }
 
-                    while (await call.ResponseStream.MoveNext(_cancellationToken))
-                    {
-                        var serverMessage = call.ResponseStream.Current;
-                        if (serverMessage.MessageCase == ProductServerMessage.MessageOneofCase.KeepAlive)
-                        {
-                            Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} StartMonitoring keep alive received");
-                        }
-                        else
-                        {
-                            var productResponse = serverMessage.ProductResponse;
-                            Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} StartMonitoring " +
-                                                         $"Product ID = {productResponse.Id}" +
-                                                         $"Price = {productResponse.Price}");
+                _monitoringStarted = true;
+                _cancellationTokenSource = new CancellationTokenSource();
+                _cancellationToken = _cancellationTokenSource.Token;
 
-                            OnNewProductAvailable(ToProductResponseEventArgs(productResponse));
-                        }
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await StartProductsMonitoring();
                     }
-                }
-                catch (RpcException e)
-                {
-                    Log.Error(Constants.AppName, $"{nameof(GrpcProductsMonitor)} RpcError while reading channel {e}");
-                }
-                catch (Exception e)
-                {
-                    Log.Error(Constants.AppName, $"{nameof(GrpcProductsMonitor)} Unknown error while reading channel {e}");
-                    throw;
-                }
-            });
+                    catch (Exception e)
+                    {
+                        Log.Error(Constants.AppName, $"{nameof(GrpcProductsMonitor)} Error while reading channel {e}. Restarting monitoring");
+                        
+                        Thread.Sleep(GetChannelRetryIntervalMilliseconds());
+                        _monitoringStarted = false;
+                        StartMonitoring();
+                    }
+                });
+            }
         }
 
         public void StopMonitoring()
         {
-            Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} StopMonitoring");
+            lock (_channelLock)
+            {
+                Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} StopMonitoring");
 
-            _cancellationTokenSource.Cancel();
+                _monitoringStarted = false;
+                _cancellationTokenSource.Cancel();
+            }
         }
 
         #region Utility Methods
+
+        private async Task StartProductsMonitoring()
+        {
+            var request = AProductRequestForUser("User1");
+            using var call = _productsManagerClient.GetProducts(request);
+
+            Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} getting products");
+
+            while (await call.ResponseStream.MoveNext(_cancellationToken))
+            {
+                var serverMessage = call.ResponseStream.Current;
+                if (serverMessage.MessageCase == ProductServerMessage.MessageOneofCase.KeepAlive)
+                {
+                    Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} keep alive received");
+                }
+                else
+                {
+                    var productResponse = serverMessage.ProductResponse;
+                    Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} " +
+                                                 $"Product ID = {productResponse.Id}" +
+                                                 $"Price = {productResponse.Price}");
+
+                    OnNewProductAvailable(ToProductResponseEventArgs(productResponse));
+                }
+            }
+        }
+
+        private static int GetChannelRetryIntervalMilliseconds()
+        {
+            return int.Parse(ChannelRetryInterval.TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
+        }
 
         private static ProductResponseEventArgs ToProductResponseEventArgs(ProductResponse productResponse)
         {
@@ -107,6 +139,15 @@ namespace TooGoodToGoNotifierAndroidApp
         protected virtual void OnNewProductAvailable(ProductResponseEventArgs e)
         {
             NewProductAvailable?.Invoke(this, e);
+        }
+
+        private static ProductRequest AProductRequestForUser(string user)
+        {
+            var request = new ProductRequest
+            {
+                User = user
+            };
+            return request;
         }
 
         #endregion

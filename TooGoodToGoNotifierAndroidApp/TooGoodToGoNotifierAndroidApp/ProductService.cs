@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Globalization;
+using System.Threading;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -38,13 +41,6 @@ namespace TooGoodToGoNotifierAndroidApp
             _productsMonitor.NewProductAvailable += ProductsMonitorOnNewProductAvailable;
             _productsMonitor.StartMonitoring();
 
-            //Task.Run(() =>
-            //{
-            //    Thread.Sleep(long.Parse(TimeSpan.FromSeconds(30).TotalMilliseconds.ToString(CultureInfo.InvariantCulture)));
-            //    Log.Debug(Constants.AppName, "Invoking OnDestroy");
-            //    OnDestroy();
-            //});
-
             return StartCommandResult.Sticky;
         }
 
@@ -72,11 +68,6 @@ namespace TooGoodToGoNotifierAndroidApp
 
             var notificationManager = NotificationManagerCompat.From(this);
             notificationManager.Notify(int.Parse(e.Id), notificationBuilder.Build());
-        }
-
-        private void GetPrice(ProductResponseEventArgs args)
-        {
-            throw new NotImplementedException();
         }
 
         #endregion
