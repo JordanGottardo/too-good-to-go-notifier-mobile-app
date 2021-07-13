@@ -16,6 +16,7 @@ namespace TooGoodToGoNotifierAndroidApp
         #region Private fields
 
         private GrpcProductsMonitor _productsMonitor;
+        private const int ForegroundNotificationId = 123;
 
         #endregion
 
@@ -37,6 +38,8 @@ namespace TooGoodToGoNotifierAndroidApp
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
             Log.Debug(Constants.AppName, "OnStartCommand");
+
+            CreateNotificationAndStartForegroundService();
 
             _productsMonitor.NewProductAvailable += ProductsMonitorOnNewProductAvailable;
             _productsMonitor.StartMonitoring();
@@ -60,15 +63,30 @@ namespace TooGoodToGoNotifierAndroidApp
         {
             Log.Debug(Constants.AppName, "ProductService: received new product available");
 
-            var notificationBuilder = new NotificationCompat.Builder(this, Constants.ChannelId)
+            var notificationBuilder = new NotificationCompat.Builder(this, Constants.NewProductNotificationChannelId)
                 .SetSmallIcon(Resource.Drawable.notification_bg)
-                //.SetContentTitle(Resources.GetString("Resource.String.notification_content_title"))
                 .SetContentTitle("New product available")
                 .SetContentText($"Item {e.Id} available at € {e.Price} in {e.StoreName} store");
 
             var notificationManager = NotificationManagerCompat.From(this);
             notificationManager.Notify(int.Parse(e.Id), notificationBuilder.Build());
         }
+
+        private void CreateNotificationAndStartForegroundService()
+        {
+            var notification = new NotificationCompat.Builder(this, Constants.ForegroundServiceNotificationChannelId)
+                .SetSmallIcon(Resource.Drawable.notification_bg)
+                .SetContentTitle("Foreground service")
+                .SetContentText($"Foreground service")
+                .SetOngoing(true)
+                .Build();
+
+            StartForeground(ForegroundNotificationId, notification);
+
+            //    .AddAction(BuildRestartTimerAction())
+            //    .AddAction(BuildStopServiceAction())
+        }
+
 
         #endregion
     }

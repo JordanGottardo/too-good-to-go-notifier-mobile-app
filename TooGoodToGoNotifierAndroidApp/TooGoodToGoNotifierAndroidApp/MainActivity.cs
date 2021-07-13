@@ -37,7 +37,7 @@ namespace TooGoodToGoNotifierAndroidApp
             SetSupportActionBar(toolbar);
 
             InitFragments();
-            CreateNotificationChannel();
+            CreateNotificationChannels();
             InitProductsMonitoring();
 
             FloatingActionButton fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
@@ -50,8 +50,6 @@ namespace TooGoodToGoNotifierAndroidApp
 
             NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
             navigationView.SetNavigationItemSelectedListener(this);
-
-            
         }
 
         public override void OnBackPressed()
@@ -127,6 +125,13 @@ namespace TooGoodToGoNotifierAndroidApp
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
+        protected override void OnDestroy()
+        {
+            Log.Debug(Constants.AppName, "MainActivity OnDestroy");
+
+            base.OnDestroy();
+        }
+
         #region Utility Methods
 
         private void ReplaceFragment(Fragment fragment)
@@ -168,11 +173,10 @@ namespace TooGoodToGoNotifierAndroidApp
         private void InitProductsMonitoring()
         {
             var productIntent = new Intent(this, typeof(ProductService));
-            
-            StartService(productIntent);
+            StartForegroundService(productIntent);
         }
 
-        void CreateNotificationChannel()
+        private void CreateNotificationChannels()
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
@@ -182,16 +186,30 @@ namespace TooGoodToGoNotifierAndroidApp
                 return;
             }
 
-            var name = Resources.GetString(Resource.String.notification_channel_name);
-            var description = GetString(Resource.String.notification_channel_description);
-            var channel = new NotificationChannel(Constants.ChannelId, name, NotificationImportance.Default)
+            CreateNotificationChannel(
+                Resource.String.product_notification_channel_name,
+                Resource.String.product_notification_channel_description, 
+                Constants.NewProductNotificationChannelId);
+
+            CreateNotificationChannel(
+                Resource.String.foreground_channel_name,
+                Resource.String.foreground_channel_description,
+                Constants.ForegroundServiceNotificationChannelId);
+        }
+
+        private void CreateNotificationChannel(int channelNameId, int channelDescriptionId, string notificationChannelId)
+        {
+            var name = GetString(channelNameId);
+            var description = GetString(channelDescriptionId);
+            var channel = new NotificationChannel(notificationChannelId, name, NotificationImportance.Default)
             {
                 Description = description
             };
 
-            var notificationManager = (NotificationManager)GetSystemService(NotificationService);
+            var notificationManager = (NotificationManager) GetSystemService(NotificationService);
             notificationManager.CreateNotificationChannel(channel);
         }
+
         #endregion
     }
 }

@@ -3,6 +3,8 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_settings">Settings</string>
-    <string name="notification_channel_name">ProductNotificationChannel</string>
-    <string name="notification_channel_description">Dispatches product notifications</string>
+    <string name="product_notification_channel_name">ProductNotificationChannel</string>
+    <string name="product_notification_channel_description">Dispatches product notifications</string>
+	<string name="foreground_channel_name">ForegroundNotificationChannel</string>
+	<string name="foreground_channel_description">Shows foreground service notification</string>
 </resources>
