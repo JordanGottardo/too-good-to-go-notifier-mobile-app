@@ -91,7 +91,7 @@ namespace TooGoodToGoNotifierAndroidApp
 
         private async Task StartProductsMonitoring()
         {
-            var request = AProductRequestForUser("User1");
+            var request = AProductRequestForUser("<username>", "<password>");
             using var call = _productsManagerClient.GetProducts(request);
 
             Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} getting products");
@@ -141,11 +141,12 @@ namespace TooGoodToGoNotifierAndroidApp
             NewProductAvailable?.Invoke(this, e);
         }
 
-        private static ProductRequest AProductRequestForUser(string user)
+        private static ProductRequest AProductRequestForUser(string username, string password)
         {
             var request = new ProductRequest
             {
-                User = user
+                Username = username,
+                Password = password
             };
             return request;
         }
