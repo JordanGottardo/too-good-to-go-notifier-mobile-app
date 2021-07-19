@@ -1,16 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-	android:background="#E8E8E8">
-    
+    android:gravity="center"
+    android:background="#E8E8E8">
+
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Settings fragment"
-        android:layout_centerInParent="true"/>
+        android:text="Username"/>
+    <EditText
+        android:inputType="textEmailAddress"
+        android:minEms="5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/usernameEditText" />
 
-</RelativeLayout>
+    <TextView
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="Password"
+	    android:layout_centerInParent="true"/>
+    <EditText
+        android:inputType="textPassword"
+        android:minEms="5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/passwordEditText" />
+    <Button
+        android:text="Save credentials"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/saveCredentialsButton" />
+
+</LinearLayout>

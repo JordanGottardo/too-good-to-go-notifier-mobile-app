@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Android.Util;
 using Grpc.Core;
+using Xamarin.Essentials;
 
 namespace TooGoodToGoNotifierAndroidApp
 {
@@ -91,7 +92,7 @@ namespace TooGoodToGoNotifierAndroidApp
 
         private async Task StartProductsMonitoring()
         {
-            var request = AProductRequestForUser("<username>", "<password>");
+            var request = await GetProductRequestOrFailAsync();
             using var call = _productsManagerClient.GetProducts(request);
 
             Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} getting products");
@@ -113,6 +114,22 @@ namespace TooGoodToGoNotifierAndroidApp
                     OnNewProductAvailable(ToProductResponseEventArgs(productResponse));
                 }
             }
+        }
+
+        private static async Task<ProductRequest> GetProductRequestOrFailAsync()
+        {
+            var username = await SecureStorage.GetAsync("username");
+            var password = await SecureStorage.GetAsync("password");
+
+            if (username is null || password is null)
+            {
+                throw new ArgumentException("Username or password has not been set");
+            }
+
+            var request = AProductRequestForUser(
+                username,
+                password);
+            return request;
         }
 
         private static int GetChannelRetryIntervalMilliseconds()

@@ -82,9 +82,6 @@ namespace TooGoodToGoNotifierAndroidApp
                 .Build();
 
             StartForeground(ForegroundNotificationId, notification);
-
-            //    .AddAction(BuildRestartTimerAction())
-            //    .AddAction(BuildStopServiceAction())
         }
 
 
