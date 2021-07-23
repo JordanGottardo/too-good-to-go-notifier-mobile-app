@@ -20,7 +20,7 @@ namespace TooGoodToGoNotifierAndroidApp
         private readonly ProductsManager.ProductsManagerClient _productsManagerClient;
         private readonly object _channelLock;
         private bool _monitoringStarted;
-        private static readonly TimeSpan ChannelRetryInterval = TimeSpan.FromSeconds(30);
+        private static readonly TimeSpan ChannelRetryInterval = TimeSpan.FromSeconds(90);
 
         #endregion
 
@@ -69,7 +69,9 @@ namespace TooGoodToGoNotifierAndroidApp
                     {
                         Log.Error(Constants.AppName, $"{nameof(GrpcProductsMonitor)} Error while reading channel {e}. Restarting monitoring");
                         
-                        Thread.Sleep(GetChannelRetryIntervalMilliseconds());
+                        _cancellationTokenSource.Cancel();
+                        
+                        await Task.Delay((ChannelRetryInterval));
                         _monitoringStarted = false;
                         StartMonitoring();
                     }
@@ -130,11 +132,6 @@ namespace TooGoodToGoNotifierAndroidApp
                 username,
                 password);
             return request;
-        }
-
-        private static int GetChannelRetryIntervalMilliseconds()
-        {
-            return int.Parse(ChannelRetryInterval.TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
         }
 
         private static ProductResponseEventArgs ToProductResponseEventArgs(ProductResponse productResponse)
