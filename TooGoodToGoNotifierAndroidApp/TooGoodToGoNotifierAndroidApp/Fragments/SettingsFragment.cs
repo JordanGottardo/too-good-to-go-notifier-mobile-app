@@ -51,7 +51,7 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
 
         #region Utility Methods
 
-        private void InitSaveCredentialsButton(View? view)
+        private void InitSaveCredentialsButton(View view)
         {
             var saveCredentialsButton = view.FindViewById<Button>(Resource.Id.saveCredentialsButton);
             saveCredentialsButton.Click += SaveCredentialsButtonOnClickAsync;

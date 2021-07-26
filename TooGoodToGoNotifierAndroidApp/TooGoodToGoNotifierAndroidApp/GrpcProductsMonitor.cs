@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using Android.Util;
 using Grpc.Core;
 using Xamarin.Essentials;
+using Timer = System.Timers.Timer;
 
 namespace TooGoodToGoNotifierAndroidApp
 {
@@ -21,6 +22,8 @@ namespace TooGoodToGoNotifierAndroidApp
         private readonly object _channelLock;
         private bool _monitoringStarted;
         private static readonly TimeSpan ChannelRetryInterval = TimeSpan.FromSeconds(90);
+        private IClientStreamWriter<ProductClientMessage> _requestStream;
+        private Timer _keepAliveTimer;
 
         #endregion
 
@@ -68,10 +71,11 @@ namespace TooGoodToGoNotifierAndroidApp
                     catch (Exception e)
                     {
                         Log.Error(Constants.AppName, $"{nameof(GrpcProductsMonitor)} Error while reading channel {e}. Restarting monitoring");
-                        
+
                         _cancellationTokenSource.Cancel();
-                        
-                        await Task.Delay((ChannelRetryInterval));
+                        _keepAliveTimer.Stop();
+
+                        await Task.Delay(ChannelRetryInterval);
                         _monitoringStarted = false;
                         StartMonitoring();
                     }
@@ -94,14 +98,15 @@ namespace TooGoodToGoNotifierAndroidApp
 
         private async Task StartProductsMonitoring()
         {
-            var request = await GetProductRequestOrFailAsync();
-            using var call = _productsManagerClient.GetProducts(request);
+            using var duplexStream = _productsManagerClient.GetProducts();
+            _requestStream = duplexStream.RequestStream;
+            await SendGetProductsRequestAndKeepalivesAsync();
 
             Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} getting products");
 
-            while (await call.ResponseStream.MoveNext(_cancellationToken))
+            while (await duplexStream.ResponseStream.MoveNext(_cancellationToken))
             {
-                var serverMessage = call.ResponseStream.Current;
+                var serverMessage = duplexStream.ResponseStream.Current;
                 if (serverMessage.MessageCase == ProductServerMessage.MessageOneofCase.KeepAlive)
                 {
                     Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} keep alive received");
@@ -118,7 +123,38 @@ namespace TooGoodToGoNotifierAndroidApp
             }
         }
 
-        private static async Task<ProductRequest> GetProductRequestOrFailAsync()
+        private async Task SendGetProductsRequestAndKeepalivesAsync()
+        {
+            var startGettingProductsRequest = await GetProductRequestOrFailAsync();
+            await _requestStream.WriteAsync(startGettingProductsRequest);
+
+            _keepAliveTimer = new Timer(TimeSpan.FromSeconds(20).TotalMilliseconds)
+            {
+                AutoReset = true
+            };
+            _keepAliveTimer.Elapsed += KeepAliveTimerOnElapsed;
+            _keepAliveTimer.Start();
+        }
+
+        private void KeepAliveTimerOnElapsed(object sender, ElapsedEventArgs e)
+        {
+            Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} sending keep alive at {e.SignalTime}");
+
+            _requestStream.WriteAsync(AKeepAliveMessage());
+        }
+
+        private static ProductClientMessage AKeepAliveMessage()
+        {
+            var keepAlive = new KeepAlive();
+            var clientMessage = new ProductClientMessage
+            {
+                KeepAlive = keepAlive
+            };
+
+            return clientMessage;
+        }
+
+        private static async Task<ProductClientMessage> GetProductRequestOrFailAsync()
         {
             var username = await SecureStorage.GetAsync("username");
             var password = await SecureStorage.GetAsync("password");
@@ -128,10 +164,14 @@ namespace TooGoodToGoNotifierAndroidApp
                 throw new ArgumentException("Username or password has not been set");
             }
 
-            var request = AProductRequestForUser(
+            var productRequest = AProductRequestForUser(
                 username,
                 password);
-            return request;
+
+            return new ProductClientMessage
+            {
+                ProductRequest = productRequest
+            };
         }
 
         private static ProductResponseEventArgs ToProductResponseEventArgs(ProductResponse productResponse)
