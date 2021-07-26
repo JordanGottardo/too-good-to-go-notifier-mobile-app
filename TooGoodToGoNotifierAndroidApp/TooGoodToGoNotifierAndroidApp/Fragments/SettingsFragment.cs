@@ -13,6 +13,7 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
     {
         #region Private fields
 
+        private EditText _channelUrlEditText;
         private EditText _usernameEditText;
         private EditText _passwordEditText;
 
@@ -22,6 +23,7 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
         {
             var view = inflater.Inflate(Resource.Layout.fragment_settings, container, false);
 
+            _channelUrlEditText = view.FindViewById<EditText>(Resource.Id.channelUrlEditText);
             _usernameEditText = view.FindViewById<EditText>(Resource.Id.usernameEditText);
             _passwordEditText = view.FindViewById<EditText>(Resource.Id.passwordEditText);
 
@@ -33,8 +35,15 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
 
         private void FillEditTextWithDataIfAvailable()
         {
+            var channelUrl = SecureStorage.GetAsync("channelUrl").Result;
             var username = SecureStorage.GetAsync("username").Result;
             var password = SecureStorage.GetAsync("password").Result;
+
+            if (channelUrl != null)
+            {
+                _channelUrlEditText.Text = channelUrl;
+
+            }
 
             if (username != null)
             {
@@ -61,11 +70,13 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
         {
             Log.Debug(Constants.AppName, "SaveCredentialsButtonOnClickAsync");
 
+            var channelUrl = _channelUrlEditText.Text;
             var username = _usernameEditText.Text;
             var password = _passwordEditText.Text;
 
             try
             {
+                await SecureStorage.SetAsync("channelUrl", channelUrl);
                 await SecureStorage.SetAsync("username", username);
                 await SecureStorage.SetAsync("password", password);
             }

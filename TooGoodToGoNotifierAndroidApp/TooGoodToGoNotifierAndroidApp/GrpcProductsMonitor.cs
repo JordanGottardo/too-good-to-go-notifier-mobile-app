@@ -16,14 +16,15 @@ namespace TooGoodToGoNotifierAndroidApp
     {
         #region Private fields
 
+        private static readonly TimeSpan ChannelRetryInterval = TimeSpan.FromSeconds(90);
         private CancellationToken _cancellationToken;
         private CancellationTokenSource _cancellationTokenSource;
-        private readonly ProductsManager.ProductsManagerClient _productsManagerClient;
+        private ProductsManager.ProductsManagerClient _productsManagerClient;
         private readonly object _channelLock;
         private bool _monitoringStarted;
-        private static readonly TimeSpan ChannelRetryInterval = TimeSpan.FromSeconds(90);
         private IClientStreamWriter<ProductClientMessage> _requestStream;
         private Timer _keepAliveTimer;
+        private Channel _channel;
 
         #endregion
 
@@ -33,8 +34,6 @@ namespace TooGoodToGoNotifierAndroidApp
         {
             Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} constructor");
 
-            var channel = new Channel("too-good-to-go-cloud-notifier.jordangottardo.com", 50051, new SslCredentials());
-            _productsManagerClient = new ProductsManager.ProductsManagerClient(channel);
             _channelLock = new object();
         }
 
@@ -66,14 +65,15 @@ namespace TooGoodToGoNotifierAndroidApp
                 {
                     try
                     {
-                        await StartProductsMonitoring();
+                        await CreateChannelIfNecessaryAsync();
+                        await StartProductsMonitoringAsync();
                     }
                     catch (Exception e)
                     {
                         Log.Error(Constants.AppName, $"{nameof(GrpcProductsMonitor)} Error while reading channel {e}. Restarting monitoring");
 
                         _cancellationTokenSource.Cancel();
-                        _keepAliveTimer.Stop();
+                        _keepAliveTimer?.Stop();
 
                         await Task.Delay(ChannelRetryInterval);
                         _monitoringStarted = false;
@@ -96,7 +96,7 @@ namespace TooGoodToGoNotifierAndroidApp
 
         #region Utility Methods
 
-        private async Task StartProductsMonitoring()
+        private async Task StartProductsMonitoringAsync()
         {
             using var duplexStream = _productsManagerClient.GetProducts();
             _requestStream = duplexStream.RequestStream;
@@ -120,6 +120,23 @@ namespace TooGoodToGoNotifierAndroidApp
 
                     OnNewProductAvailable(ToProductResponseEventArgs(productResponse));
                 }
+            }
+        }
+
+        private async Task CreateChannelIfNecessaryAsync()
+        {
+            if (_channel is null)
+            {
+                var channelUrlAndPort = await SecureStorage.GetAsync("channelUrl");
+
+                if (IsNullOrWhitespace(channelUrlAndPort))
+                {
+                    throw new ArgumentException("Channel URL has not been set");
+                }
+                Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} channel url {channelUrlAndPort}");
+
+                _channel = new Channel(channelUrlAndPort, new SslCredentials());
+                _productsManagerClient = new ProductsManager.ProductsManagerClient(_channel);
             }
         }
 
@@ -159,7 +176,7 @@ namespace TooGoodToGoNotifierAndroidApp
             var username = await SecureStorage.GetAsync("username");
             var password = await SecureStorage.GetAsync("password");
 
-            if (username is null || password is null)
+            if (IsNullOrWhitespace(username) || IsNullOrWhitespace(password))
             {
                 throw new ArgumentException("Username or password has not been set");
             }
@@ -203,6 +220,11 @@ namespace TooGoodToGoNotifierAndroidApp
                 Password = password
             };
             return request;
+        }
+
+        private static bool IsNullOrWhitespace(string s)
+        {
+            return string.IsNullOrWhiteSpace(s);
         }
 
         #endregion
