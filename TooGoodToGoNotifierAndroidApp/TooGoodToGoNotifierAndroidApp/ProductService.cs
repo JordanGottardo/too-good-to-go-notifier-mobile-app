@@ -61,6 +61,7 @@ namespace TooGoodToGoNotifierAndroidApp
 
             _productsMonitor.NewProductAvailable -= ProductsMonitorOnNewProductAvailable;
             _productsMonitor.StopMonitoring();
+            StopForeground(true);
 
             base.OnDestroy();
         }
