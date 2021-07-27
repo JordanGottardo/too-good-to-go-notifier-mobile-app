@@ -157,7 +157,14 @@ namespace TooGoodToGoNotifierAndroidApp
         {
             Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} sending keep alive at {e.SignalTime}");
 
-            _requestStream.WriteAsync(AKeepAliveMessage());
+            try
+            {
+                _requestStream.WriteAsync(AKeepAliveMessage());
+            }
+            catch (Exception ex)
+            {
+                Log.Error(Constants.AppName, $"{nameof(GrpcProductsMonitor)} An error occurred while writing keep alive {ex}");
+            }
         }
 
         private static ProductClientMessage AKeepAliveMessage()

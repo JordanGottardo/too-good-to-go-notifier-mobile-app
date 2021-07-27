@@ -42,7 +42,15 @@ namespace TooGoodToGoNotifierAndroidApp
             CreateNotificationAndStartForegroundService();
 
             _productsMonitor.NewProductAvailable += ProductsMonitorOnNewProductAvailable;
-            _productsMonitor.StartMonitoring();
+            try
+            {
+                _productsMonitor.StartMonitoring();
+            }
+            catch (Exception e)
+            {
+                Log.Error(Constants.AppName, $"{nameof(ProductService)} An error occurred while starting monitoring {e}");
+                throw;
+            }
 
             return StartCommandResult.Sticky;
         }
@@ -83,7 +91,6 @@ namespace TooGoodToGoNotifierAndroidApp
 
             StartForeground(ForegroundNotificationId, notification);
         }
-
 
         #endregion
     }
