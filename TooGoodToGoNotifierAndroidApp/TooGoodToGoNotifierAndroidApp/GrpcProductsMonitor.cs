@@ -76,8 +76,14 @@ namespace TooGoodToGoNotifierAndroidApp
                         _keepAliveTimer?.Stop();
 
                         await Task.Delay(ChannelRetryInterval);
-                        _monitoringStarted = false;
-                        StartMonitoring();
+                        lock (_channelLock)
+                        {
+                            if (_monitoringStarted)
+                            {
+                                _monitoringStarted = false;
+                                StartMonitoring();
+                            }
+                        }
                     }
                 });
             }
@@ -91,6 +97,7 @@ namespace TooGoodToGoNotifierAndroidApp
 
                 _monitoringStarted = false;
                 _cancellationTokenSource.Cancel();
+                _keepAliveTimer.Stop();
             }
         }
 

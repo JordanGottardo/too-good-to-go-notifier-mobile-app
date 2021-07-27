@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Android.App;
+using Android.App.Job;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
@@ -171,10 +173,36 @@ namespace TooGoodToGoNotifierAndroidApp
                 .SetAction("Action", (View.IOnClickListener)null).Show();
         }
 
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private void InitProductsMonitoring()
         {
-            var productIntent = new Intent(this, typeof(ProductService));
-            StartForegroundService(productIntent);
+            //var productIntent = new Intent(this, typeof(ProductService));
+            //StartForegroundService(productIntent);
+
+            var javaClass = Java.Lang.Class.FromType(typeof(ProductsJobService));
+            var componentName = new ComponentName(this, javaClass);
+            var jobInfo = new JobInfo.Builder(1, componentName)
+                .SetBackoffCriteria(ToMilliseconds(TimeSpan.FromSeconds(30)), BackoffPolicy.Linear)
+                .SetPeriodic(ToMilliseconds(TimeSpan.FromMinutes(15)))
+                .SetPersisted(true)
+                .Build();
+
+            var jobScheduler = (JobScheduler)GetSystemService(JobSchedulerService);
+            var scheduleResult = jobScheduler.Schedule(jobInfo!);
+
+            if (JobScheduler.ResultSuccess == scheduleResult)
+            {
+                Log.Debug(Constants.AppName, "MainActivity job scheduler success");
+
+                //var snackBar = Snackbar.Make(FindViewById(Android.Resource.Id.Content), Resource.String.jobscheduled_success, Snackbar.LengthShort);
+                //snackBar.Show();
+            }
+            else
+            {
+                Log.Debug(Constants.AppName, "MainActivity job scheduler failure");
+                //var snackBar = Snackbar.Make(FindViewById(Android.Resource.Id.Content), Resource.String.jobscheduled_failure, Snackbar.LengthShort);
+                //snackBar.Show();
+            }
         }
 
         private void CreateNotificationChannels()
@@ -209,6 +237,11 @@ namespace TooGoodToGoNotifierAndroidApp
 
             var notificationManager = (NotificationManager) GetSystemService(NotificationService);
             notificationManager.CreateNotificationChannel(channel);
+        }
+
+        private long ToMilliseconds(TimeSpan timeSpan)
+        {
+            return Convert.ToInt64(timeSpan.TotalMilliseconds);
         }
 
         #endregion
