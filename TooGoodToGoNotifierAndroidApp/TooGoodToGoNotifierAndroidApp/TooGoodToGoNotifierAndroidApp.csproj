@@ -67,6 +67,7 @@
     <Compile Include="Fragments\SettingsFragment.cs" />
     <Compile Include="GrpcProductsMonitor.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="ProductMonitorWorker.cs" />
     <Compile Include="ProductService.cs" />
     <Compile Include="ProductsJobService.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
@@ -142,6 +143,9 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.2.0.5" />
+    <PackageReference Include="Xamarin.AndroidX.Work.Runtime">
+      <Version>2.5.0.3</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.Google.Android.Material" Version="1.0.0.1" />
     <PackageReference Include="Xamarin.Essentials" Version="1.7.0" />
   </ItemGroup>

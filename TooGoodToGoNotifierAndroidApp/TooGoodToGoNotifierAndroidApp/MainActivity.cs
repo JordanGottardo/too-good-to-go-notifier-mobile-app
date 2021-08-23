@@ -11,11 +11,13 @@ using AndroidX.AppCompat.App;
 using AndroidX.AppCompat.Widget;
 using AndroidX.Core.View;
 using AndroidX.DrawerLayout.Widget;
+using AndroidX.Work;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.Navigation;
 using Google.Android.Material.Snackbar;
 using TooGoodToGoNotifierAndroidApp.Fragments;
 using Xamarin.Essentials;
+using BackoffPolicy = Android.App.Job.BackoffPolicy;
 using Fragment = AndroidX.Fragment.App.Fragment;
 using FragmentTransaction = AndroidX.Fragment.App.FragmentTransaction;
 
@@ -34,6 +36,9 @@ namespace TooGoodToGoNotifierAndroidApp
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+            Log.Debug(Constants.AppName, "MainActivity OnCreate");
+
             Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
             Toolbar toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
@@ -179,30 +184,41 @@ namespace TooGoodToGoNotifierAndroidApp
             //var productIntent = new Intent(this, typeof(ProductService));
             //StartForegroundService(productIntent);
 
-            var javaClass = Java.Lang.Class.FromType(typeof(ProductsJobService));
-            var componentName = new ComponentName(this, javaClass);
-            var jobInfo = new JobInfo.Builder(1, componentName)
-                .SetBackoffCriteria(ToMilliseconds(TimeSpan.FromSeconds(30)), BackoffPolicy.Linear)
-                .SetPeriodic(ToMilliseconds(TimeSpan.FromMinutes(15)))
-                .SetPersisted(true)
+            Log.Debug(Constants.AppName, "MainActivity InitProductsMonitoring");
+
+            
+            var productMonitorRequest = PeriodicWorkRequest.Builder.From<ProductMonitorWorker>(TimeSpan.FromMinutes(20))
                 .Build();
 
-            var jobScheduler = (JobScheduler)GetSystemService(JobSchedulerService);
-            var scheduleResult = jobScheduler.Schedule(jobInfo!);
+            WorkManager
+                .GetInstance(this)
+                .EnqueueUniquePeriodicWork("monitorProducts", ExistingPeriodicWorkPolicy.Replace, productMonitorRequest);
 
-            if (JobScheduler.ResultSuccess == scheduleResult)
-            {
-                Log.Debug(Constants.AppName, "MainActivity job scheduler success");
+            //var javaClass = Java.Lang.Class.FromType(typeof(ProductsJobService));
+            //var componentName = new ComponentName(this, javaClass);
+            //var jobInfo = new JobInfo.Builder(1, componentName)
+            //    .SetBackoffCriteria(ToMilliseconds(TimeSpan.FromSeconds(30)), BackoffPolicy.Linear)
+            //    .SetPeriodic(ToMilliseconds(TimeSpan.FromMinutes(15)))
+            //    .SetPersisted(true)
+            //    .Build();
 
-                //var snackBar = Snackbar.Make(FindViewById(Android.Resource.Id.Content), Resource.String.jobscheduled_success, Snackbar.LengthShort);
-                //snackBar.Show();
-            }
-            else
-            {
-                Log.Debug(Constants.AppName, "MainActivity job scheduler failure");
-                //var snackBar = Snackbar.Make(FindViewById(Android.Resource.Id.Content), Resource.String.jobscheduled_failure, Snackbar.LengthShort);
-                //snackBar.Show();
-            }
+            //var jobScheduler = (JobScheduler)GetSystemService(JobSchedulerService);
+            //var scheduleResult = jobScheduler.Schedule(jobInfo!);
+
+
+            //if (JobScheduler.ResultSuccess == scheduleResult)
+            //{
+            //    Log.Debug(Constants.AppName, "MainActivity job scheduler success");
+
+            //    //var snackBar = Snackbar.Make(FindViewById(Android.Resource.Id.Content), Resource.String.jobscheduled_success, Snackbar.LengthShort);
+            //    //snackBar.Show();
+            //}
+            //else
+            //{
+            //    Log.Debug(Constants.AppName, "MainActivity job scheduler failure");
+            //    //var snackBar = Snackbar.Make(FindViewById(Android.Resource.Id.Content), Resource.String.jobscheduled_failure, Snackbar.LengthShort);
+            //    //snackBar.Show();
+            //}
         }
 
         private void CreateNotificationChannels()
