@@ -33,11 +33,11 @@ namespace TooGoodToGoNotifierAndroidApp
                 {
                     _productsMonitor.NewProductAvailable += ProductsMonitorOnNewProductAvailable;
                     _productsMonitor.StartMonitoring();
-                    Log.Debug(Constants.AppName, "ProductMonitorWorker Monitoring started. Waiting 1 min");
+                    Log.Debug(Constants.AppName, "ProductMonitorWorker Monitoring started. Waiting 9 mins");
 
                     await Task.Delay(TimeSpan.FromMinutes(9));
 
-                    Log.Debug(Constants.AppName, "ProductMonitorWorker Monitoring started. Waited 1 min");
+                    Log.Debug(Constants.AppName, "ProductMonitorWorker Monitoring started. Waited 9 mins");
                     _productsMonitor.StopMonitoring();
 
                     Log.Debug(Constants.AppName, "ProductMonitorWorker Monitoring stopped");
@@ -64,8 +64,8 @@ namespace TooGoodToGoNotifierAndroidApp
         {
             var notificationBuilder = new NotificationCompat.Builder(_context, Constants.NewProductNotificationChannelId)
                 .SetSmallIcon(Resource.Drawable.notification_bg)
-                .SetContentTitle("From ProductMonitorWorker")
-                .SetContentText($"From ProductMonitorWorker");
+                .SetContentTitle("From ProductMonitorWorker2")
+                .SetContentText("From ProductMonitorWorker2");
 
             var notificationManager = NotificationManagerCompat.From(_context);
             notificationManager.Notify(6665, notificationBuilder.Build());
