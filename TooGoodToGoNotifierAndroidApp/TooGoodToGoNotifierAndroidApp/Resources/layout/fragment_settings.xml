@@ -43,9 +43,15 @@
         android:id="@+id/passwordEditText" />
 
     <Button
-        android:text="Save credentials"
+        android:text="Start monitoring"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/saveCredentialsButton" />
+        android:id="@+id/startMonitoringButton" />
+
+	<Button
+		android:text="Stop monitoring"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/stopMonitoringButton" />
 
 </LinearLayout>
