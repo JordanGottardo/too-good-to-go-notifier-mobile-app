@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Android.App;
+using Android.App.Job;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
@@ -9,11 +11,13 @@ using AndroidX.AppCompat.App;
 using AndroidX.AppCompat.Widget;
 using AndroidX.Core.View;
 using AndroidX.DrawerLayout.Widget;
+using AndroidX.Work;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.Navigation;
 using Google.Android.Material.Snackbar;
 using TooGoodToGoNotifierAndroidApp.Fragments;
 using Xamarin.Essentials;
+using BackoffPolicy = Android.App.Job.BackoffPolicy;
 using Fragment = AndroidX.Fragment.App.Fragment;
 using FragmentTransaction = AndroidX.Fragment.App.FragmentTransaction;
 
@@ -32,6 +36,9 @@ namespace TooGoodToGoNotifierAndroidApp
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+            Log.Debug(Constants.AppName, "MainActivity OnCreate");
+
             Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
             Toolbar toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
@@ -171,10 +178,17 @@ namespace TooGoodToGoNotifierAndroidApp
                 .SetAction("Action", (View.IOnClickListener)null).Show();
         }
 
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private void InitProductsMonitoring()
         {
-            var productIntent = new Intent(this, typeof(ProductService));
-            StartForegroundService(productIntent);
+            Log.Debug(Constants.AppName, "MainActivity InitProductsMonitoring");
+            
+            var productMonitorRequest = PeriodicWorkRequest.Builder.From<ProductMonitorWorker>(TimeSpan.FromMinutes(20))
+                .Build();
+
+            WorkManager
+                .GetInstance(this)
+                .EnqueueUniquePeriodicWork("monitorProducts", ExistingPeriodicWorkPolicy.Replace, productMonitorRequest);
         }
 
         private void CreateNotificationChannels()
@@ -209,6 +223,11 @@ namespace TooGoodToGoNotifierAndroidApp
 
             var notificationManager = (NotificationManager) GetSystemService(NotificationService);
             notificationManager.CreateNotificationChannel(channel);
+        }
+
+        private long ToMilliseconds(TimeSpan timeSpan)
+        {
+            return Convert.ToInt64(timeSpan.TotalMilliseconds);
         }
 
         #endregion

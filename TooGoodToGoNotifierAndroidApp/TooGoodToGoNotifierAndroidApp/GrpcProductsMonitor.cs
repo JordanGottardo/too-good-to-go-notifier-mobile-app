@@ -65,6 +65,13 @@ namespace TooGoodToGoNotifierAndroidApp
                 {
                     try
                     {
+                        if (bool.Parse(await GetFromSecureStorage("stopMonitoring")))
+                        {
+                            Log.Error(Constants.AppName, $"{nameof(GrpcProductsMonitor)} Monitoring has not started. Press the StartMonitoring button in the settings page");
+                            
+                            return;
+                        }
+
                         await CreateChannelIfNecessaryAsync();
                         await StartProductsMonitoringAsync();
                     }
@@ -76,8 +83,14 @@ namespace TooGoodToGoNotifierAndroidApp
                         _keepAliveTimer?.Stop();
 
                         await Task.Delay(ChannelRetryInterval);
-                        _monitoringStarted = false;
-                        StartMonitoring();
+                        lock (_channelLock)
+                        {
+                            if (_monitoringStarted)
+                            {
+                                _monitoringStarted = false;
+                                StartMonitoring();
+                            }
+                        }
                     }
                 });
             }
@@ -91,6 +104,7 @@ namespace TooGoodToGoNotifierAndroidApp
 
                 _monitoringStarted = false;
                 _cancellationTokenSource.Cancel();
+                _keepAliveTimer.Stop();
             }
         }
 
@@ -98,6 +112,8 @@ namespace TooGoodToGoNotifierAndroidApp
 
         private async Task StartProductsMonitoringAsync()
         {
+            await EnsureProductMonitoringIsStarted();
+
             using var duplexStream = _productsManagerClient.GetProducts();
             _requestStream = duplexStream.RequestStream;
             await SendGetProductsRequestAndKeepalivesAsync();
@@ -123,11 +139,38 @@ namespace TooGoodToGoNotifierAndroidApp
             }
         }
 
+        private async Task EnsureProductMonitoringIsStarted()
+        {
+            Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} ensuring product monitoring is started");
+
+            var username = await GetFromSecureStorage("username");
+            var password = await GetFromSecureStorage("password");
+
+            var productMonitorRequest = CreateProductMonitorRequest(username, password);
+
+            try
+            {
+                _productsManagerClient.StartMonitoring(productMonitorRequest);
+            }
+            catch (RpcException e) when (e.StatusCode == StatusCode.AlreadyExists)
+            {
+            }
+        }
+
+        private static ProductMonitoringRequest CreateProductMonitorRequest(string username, string password)
+        {
+            return new ProductMonitoringRequest
+            {
+                Username = username,
+                Password = password
+            };
+        }
+
         private async Task CreateChannelIfNecessaryAsync()
         {
             if (_channel is null)
             {
-                var channelUrlAndPort = await SecureStorage.GetAsync("channelUrl");
+                var channelUrlAndPort = await GetFromSecureStorage("channelUrl");
 
                 if (IsNullOrWhitespace(channelUrlAndPort))
                 {
@@ -180,17 +223,14 @@ namespace TooGoodToGoNotifierAndroidApp
 
         private static async Task<ProductClientMessage> GetProductRequestOrFailAsync()
         {
-            var username = await SecureStorage.GetAsync("username");
-            var password = await SecureStorage.GetAsync("password");
+            var username = await GetFromSecureStorage("username");
 
-            if (IsNullOrWhitespace(username) || IsNullOrWhitespace(password))
+            if (IsNullOrWhitespace(username))
             {
                 throw new ArgumentException("Username or password has not been set");
             }
 
-            var productRequest = AProductRequestForUser(
-                username,
-                password);
+            var productRequest = AProductRequestForUser(username);
 
             return new ProductClientMessage
             {
@@ -219,12 +259,11 @@ namespace TooGoodToGoNotifierAndroidApp
             NewProductAvailable?.Invoke(this, e);
         }
 
-        private static ProductRequest AProductRequestForUser(string username, string password)
+        private static ProductRequest AProductRequestForUser(string username)
         {
             var request = new ProductRequest
             {
                 Username = username,
-                Password = password
             };
             return request;
         }
@@ -232,6 +271,11 @@ namespace TooGoodToGoNotifierAndroidApp
         private static bool IsNullOrWhitespace(string s)
         {
             return string.IsNullOrWhiteSpace(s);
+        }
+
+        private static async Task<string> GetFromSecureStorage(string key)
+        {
+            return await SecureStorage.GetAsync(key);
         }
 
         #endregion
