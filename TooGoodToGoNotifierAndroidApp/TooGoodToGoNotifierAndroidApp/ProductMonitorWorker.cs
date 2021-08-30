@@ -33,11 +33,11 @@ namespace TooGoodToGoNotifierAndroidApp
                 {
                     _productsMonitor.NewProductAvailable += ProductsMonitorOnNewProductAvailable;
                     _productsMonitor.StartMonitoring();
-                    Log.Debug(Constants.AppName, "ProductMonitorWorker Monitoring started. Waiting 9 mins");
+                    Log.Debug(Constants.AppName, "ProductMonitorWorker Monitoring started. Waiting 1 mins");
 
-                    await Task.Delay(TimeSpan.FromMinutes(9));
+                    await Task.Delay(TimeSpan.FromMinutes(1));
 
-                    Log.Debug(Constants.AppName, "ProductMonitorWorker Monitoring started. Waited 9 mins");
+                    Log.Debug(Constants.AppName, "ProductMonitorWorker Monitoring started. Waited 1 mins");
                     _productsMonitor.StopMonitoring();
 
                     Log.Debug(Constants.AppName, "ProductMonitorWorker Monitoring stopped");
