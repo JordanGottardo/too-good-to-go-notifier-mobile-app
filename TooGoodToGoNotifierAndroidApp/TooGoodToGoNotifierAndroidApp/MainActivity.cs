@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using Android.App;
-using Android.App.Job;
-using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Util;
@@ -17,13 +15,15 @@ using Google.Android.Material.Navigation;
 using Google.Android.Material.Snackbar;
 using TooGoodToGoNotifierAndroidApp.Fragments;
 using Xamarin.Essentials;
-using BackoffPolicy = Android.App.Job.BackoffPolicy;
 using Fragment = AndroidX.Fragment.App.Fragment;
 using FragmentTransaction = AndroidX.Fragment.App.FragmentTransaction;
 
 namespace TooGoodToGoNotifierAndroidApp
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
+    [SuppressMessage("ReSharper", "UnusedType.Global")]
+    [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
         #region Private Fields
@@ -41,28 +41,28 @@ namespace TooGoodToGoNotifierAndroidApp
 
             Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
-            Toolbar toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
+            var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
 
             InitFragments();
             CreateNotificationChannels();
             InitProductsMonitoring();
 
-            FloatingActionButton fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
+            var fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
             fab.Click += FabOnClick;
 
-            DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
+            var drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
+            var toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
             drawer.AddDrawerListener(toggle);
             toggle.SyncState();
 
-            NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
+            var navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
             navigationView.SetNavigationItemSelectedListener(this);
         }
 
         public override void OnBackPressed()
         {
-            DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
+            var drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             if(drawer.IsDrawerOpen(GravityCompat.Start))
             {
                 drawer.CloseDrawer(GravityCompat.Start);
@@ -81,7 +81,7 @@ namespace TooGoodToGoNotifierAndroidApp
 
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
-            int id = item.ItemId;
+            var id = item.ItemId;
             if (id == Resource.Id.action_settings)
             {
                 return true;
@@ -92,43 +92,30 @@ namespace TooGoodToGoNotifierAndroidApp
 
         public bool OnNavigationItemSelected(IMenuItem item)
         {
-            int id = item.ItemId;
+            var id = item.ItemId;
 
-            if (id == Resource.Id.nav_camera)
+            switch (id)
             {
-                // Handle the camera action
-            }
-            else if (id == Resource.Id.nav_gallery)
-            {
-                Log.Debug("TooGoodToGoNotifierApp", "Clicked on nav gallery");
-                ReplaceFragment(_settingsFragment);
-            }
-            else if (id == Resource.Id.nav_slideshow)
-            {
-                Log.Debug("TooGoodToGoNotifierApp", "Clicked on slideshow");
-                ReplaceFragment(_productFragment);
-            }
-            else if (id == Resource.Id.nav_manage)
-            {
-
-            }
-            else if (id == Resource.Id.nav_share)
-            {
-
-            }
-            else if (id == Resource.Id.nav_send)
-            {
-
+                case Resource.Id.nav_gallery:
+                    Log.Debug("TooGoodToGoNotifierApp", "Clicked on nav gallery");
+                    ReplaceFragment(_settingsFragment);
+                    break;
+                case Resource.Id.nav_slideshow:
+                    Log.Debug("TooGoodToGoNotifierApp", "Clicked on slideshow");
+                    ReplaceFragment(_productFragment);
+                    break;
+                case Resource.Id.nav_send:
+                    break;
             }
 
-            DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
+            var drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             drawer.CloseDrawer(GravityCompat.Start);
             return true;
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
-            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
@@ -178,7 +165,6 @@ namespace TooGoodToGoNotifierAndroidApp
                 .SetAction("Action", (View.IOnClickListener)null).Show();
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private void InitProductsMonitoring()
         {
             Log.Debug(Constants.AppName, "MainActivity InitProductsMonitoring");
@@ -223,11 +209,6 @@ namespace TooGoodToGoNotifierAndroidApp
 
             var notificationManager = (NotificationManager) GetSystemService(NotificationService);
             notificationManager.CreateNotificationChannel(channel);
-        }
-
-        private long ToMilliseconds(TimeSpan timeSpan)
-        {
-            return Convert.ToInt64(timeSpan.TotalMilliseconds);
         }
 
         #endregion
