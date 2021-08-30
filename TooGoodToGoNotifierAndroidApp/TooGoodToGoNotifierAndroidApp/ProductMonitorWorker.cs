@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Android.Content;
-using Android.Runtime;
 using Android.Util;
 using AndroidX.Core.App;
 using AndroidX.Work;
@@ -47,7 +46,7 @@ namespace TooGoodToGoNotifierAndroidApp
             }
             catch (Exception e)
             {
-                Log.Error(Constants.AppName, $"{nameof(ProductService)} An error occurred while starting monitoring {e}");
+                Log.Error(Constants.AppName, $"{nameof(ProductMonitorWorker)} An error occurred while starting monitoring {e}");
                 return Result.InvokeFailure();
             }
             finally
