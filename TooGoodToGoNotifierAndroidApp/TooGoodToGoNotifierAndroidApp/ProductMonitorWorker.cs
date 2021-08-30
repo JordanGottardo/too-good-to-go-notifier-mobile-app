@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Android.Content;
 using Android.Runtime;
@@ -8,6 +9,7 @@ using AndroidX.Work;
 
 namespace TooGoodToGoNotifierAndroidApp
 {
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     internal class ProductMonitorWorker: Worker
     {
         private readonly Context _context;
@@ -52,8 +54,6 @@ namespace TooGoodToGoNotifierAndroidApp
             {
                 _productsMonitor.NewProductAvailable -= ProductsMonitorOnNewProductAvailable;
             }
-
-            //CreateTestNotification();
 
             return Result.InvokeSuccess();
         }

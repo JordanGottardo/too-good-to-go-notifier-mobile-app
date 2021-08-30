@@ -65,6 +65,13 @@ namespace TooGoodToGoNotifierAndroidApp
                 {
                     try
                     {
+                        if (bool.Parse(await GetFromSecureStorage("stopMonitoring")))
+                        {
+                            Log.Error(Constants.AppName, $"{nameof(GrpcProductsMonitor)} Monitoring has not started. Press the StartMonitoring button in the settings page");
+                            
+                            return;
+                        }
+
                         await CreateChannelIfNecessaryAsync();
                         await StartProductsMonitoringAsync();
                     }
@@ -105,7 +112,7 @@ namespace TooGoodToGoNotifierAndroidApp
 
         private async Task StartProductsMonitoringAsync()
         {
-            //await EnsureProductMonitoringIsStarted(); //TODO uncomment to enable automatic startMonitoring when cloud services are restarted
+            await EnsureProductMonitoringIsStarted();
 
             using var duplexStream = _productsManagerClient.GetProducts();
             _requestStream = duplexStream.RequestStream;

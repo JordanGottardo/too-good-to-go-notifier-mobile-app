@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using Android.OS;
 using Android.Util;
 using Android.Views;
@@ -75,14 +76,17 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
             stopMonitoringButton.Click += StopMonitoringButtonOnClickAsync;
         }
 
-        private void StopMonitoringButtonOnClickAsync(object sender, EventArgs e)
+        private async void StopMonitoringButtonOnClickAsync(object sender, EventArgs e)
         {
             Log.Debug(Constants.AppName, "StopMonitoringButtonOnClickAsync");
 
             try
             {
+                await SetInSecureStorage("stopMonitoring", bool.TrueString);
+
                 var channelUrlAndPort = _channelUrlEditText.Text;
                 var username = _usernameEditText.Text;
+                
 
                 StopMonitoring(channelUrlAndPort, username);
             }
@@ -102,9 +106,11 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
 
             try
             {
-                await SecureStorage.SetAsync("channelUrl", channelUrlAndPort);
-                await SecureStorage.SetAsync("username", username);
-                await SecureStorage.SetAsync("password", password);
+                await SetInSecureStorage("stopMonitoring", bool.FalseString);
+
+                await SetInSecureStorage("channelUrl", channelUrlAndPort);
+                await SetInSecureStorage("username", username);
+                await SetInSecureStorage("password", password);
 
                 StartMonitoring(channelUrlAndPort, username, password);
             }
@@ -112,6 +118,11 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
             {
                 Log.Error(Constants.AppName, $"An error occurred while saving credentials to secure storage {ex}");
             }
+        }
+
+        private static async Task SetInSecureStorage(string key, string value)
+        {
+            await SecureStorage.SetAsync(key, value);
         }
 
         private void StartMonitoring(string channelUrl, string username, string password)
@@ -123,6 +134,7 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
 
             try
             {
+                productsClient.StartMonitoringAsync(productMonitoringRequest);
                 productsClient.StartMonitoring(productMonitoringRequest);
                 Log.Debug(Constants.AppName, "Start product monitoring successful");
             }
