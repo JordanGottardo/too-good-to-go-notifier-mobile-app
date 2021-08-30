@@ -8,5 +8,6 @@
 	<string name="foreground_channel_name">ForegroundNotificationChannel</string>
 	<string name="foreground_channel_description">Shows foreground service notification</string>
 	<string name="start_monitoring_failure">Start monitor products failure</string>
+	<string name="start_monitoring_failure_already_started">Product monitoring already in progress</string>
 	<string name="stop_monitoring_failure">Stop monitor products failure</string>
 </resources>

@@ -1,15 +1,17 @@
 ﻿using System;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Google.Android.Material.Snackbar;
+using Grpc.Core;
 using Xamarin.Essentials;
 using Fragment = AndroidX.Fragment.App.Fragment;
 
 namespace TooGoodToGoNotifierAndroidApp.Fragments
 {
+    [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
     public class SettingsFragment : Fragment
     {
         #region Private fields
@@ -35,8 +37,6 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
 
             return _view;
         }
-
-
 
         private void FillEditTextWithDataIfAvailable()
         {
@@ -83,9 +83,8 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
             {
                 var channelUrlAndPort = _channelUrlEditText.Text;
                 var username = _usernameEditText.Text;
-                var password = _passwordEditText.Text;
 
-                StopMonitoring(channelUrlAndPort, username, password);
+                StopMonitoring(channelUrlAndPort, username);
             }
             catch (Exception ex)
             {
@@ -127,15 +126,21 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
                 productsClient.StartMonitoring(productMonitoringRequest);
                 Log.Debug(Constants.AppName, "Start product monitoring successful");
             }
+            catch (RpcException e) when (e.StatusCode == StatusCode.AlreadyExists)
+            {
+                Log.Debug(Constants.AppName, $"Monitoring has already started {e}");
+                var snackBar = Snackbar.Make(_view, Resource.String.start_monitoring_failure_already_started, Snackbar.LengthShort);
+                snackBar.Show();
+            }
             catch (Exception e)
             {
-                Log.Debug(Constants.AppName, $"An error occurred while starting monitoring {e}");
+                Log.Error(Constants.AppName, $"An error occurred while starting monitoring {e}");
                 var snackBar = Snackbar.Make(_view, Resource.String.start_monitoring_failure, Snackbar.LengthShort);
                 snackBar.Show();
             }
         }
 
-        private void StopMonitoring(string channelUrl, string username, string password)
+        private void StopMonitoring(string channelUrl, string username)
         {
             var productsClientFactory = new ProductsClientFactory();
             var productsClient = productsClientFactory.Create(channelUrl);

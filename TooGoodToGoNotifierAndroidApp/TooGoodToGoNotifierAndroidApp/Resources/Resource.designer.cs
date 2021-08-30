@@ -4747,10 +4747,13 @@ namespace TooGoodToGoNotifierAndroidApp
 			public const int start_monitoring_failure = 2131623989;
 			
 			// aapt resource value: 0x7F0E0036
-			public const int status_bar_notification_info_overflow = 2131623990;
+			public const int start_monitoring_failure_already_started = 2131623990;
 			
 			// aapt resource value: 0x7F0E0037
-			public const int stop_monitoring_failure = 2131623991;
+			public const int status_bar_notification_info_overflow = 2131623991;
+			
+			// aapt resource value: 0x7F0E0038
+			public const int stop_monitoring_failure = 2131623992;
 			
 			static String()
 			{
