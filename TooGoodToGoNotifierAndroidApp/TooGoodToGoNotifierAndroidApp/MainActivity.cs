@@ -169,7 +169,7 @@ namespace TooGoodToGoNotifierAndroidApp
         {
             Log.Debug(Constants.AppName, "MainActivity InitProductsMonitoring");
             
-            var productMonitorRequest = PeriodicWorkRequest.Builder.From<ProductMonitorWorker>(TimeSpan.FromMinutes(20))
+            var productMonitorRequest = PeriodicWorkRequest.Builder.From<ProductMonitorWorker>(TimeSpan.FromMinutes(15))
                 .Build();
 
             WorkManager

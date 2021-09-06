@@ -65,7 +65,7 @@ namespace TooGoodToGoNotifierAndroidApp
                 {
                     try
                     {
-                        if (bool.Parse(await GetFromSecureStorage("stopMonitoring")))
+                        if (await StopMonitoringHasBeenRequested())
                         {
                             Log.Error(Constants.AppName, $"{nameof(GrpcProductsMonitor)} Monitoring has not started. Press the StartMonitoring button in the settings page");
                             
@@ -96,6 +96,13 @@ namespace TooGoodToGoNotifierAndroidApp
             }
         }
 
+        private static async Task<bool> StopMonitoringHasBeenRequested()
+        {
+            var stopMonitoringValue = await GetFromSecureStorage("stopMonitoring");
+
+            return stopMonitoringValue is null || bool.Parse(stopMonitoringValue);
+        }
+
         public void StopMonitoring()
         {
             lock (_channelLock)
@@ -103,8 +110,8 @@ namespace TooGoodToGoNotifierAndroidApp
                 Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} StopMonitoring");
 
                 _monitoringStarted = false;
-                _cancellationTokenSource.Cancel();
-                _keepAliveTimer.Stop();
+                _cancellationTokenSource?.Cancel();
+                _keepAliveTimer?.Stop();
             }
         }
 
@@ -112,7 +119,7 @@ namespace TooGoodToGoNotifierAndroidApp
 
         private async Task StartProductsMonitoringAsync()
         {
-            await EnsureProductMonitoringIsStarted();
+            //await EnsureProductMonitoringIsStarted();
 
             using var duplexStream = _productsManagerClient.GetProducts();
             _requestStream = duplexStream.RequestStream;

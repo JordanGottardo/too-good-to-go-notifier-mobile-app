@@ -17,7 +17,7 @@ namespace TooGoodToGoNotifierAndroidApp
         public ProductMonitorWorker(Context context, WorkerParameters workerParams) : base(context, workerParams)
         {
             Log.Debug(Constants.AppName, "ProductMonitorWorker Constructor");
-
+            Console.WriteLine($"{Constants.AppName} TEST123 ProductMonitorWorker Constructor");
             _context = context;
             _productsMonitor = new GrpcProductsMonitor();
 

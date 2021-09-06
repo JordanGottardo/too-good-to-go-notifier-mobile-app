@@ -39,29 +39,6 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
             return _view;
         }
 
-        private void FillEditTextWithDataIfAvailable()
-        {
-            var channelUrl = SecureStorage.GetAsync("channelUrl").Result;
-            var username = SecureStorage.GetAsync("username").Result;
-            var password = SecureStorage.GetAsync("password").Result;
-
-            if (channelUrl != null)
-            {
-                _channelUrlEditText.Text = channelUrl;
-            }
-
-            if (username != null)
-            {
-                _usernameEditText.Text = username;
-            }
-
-            if (password != null)
-            {
-                _passwordEditText.Text = password;
-            }
-        }
-
-
         #region Utility Methods
 
         private void InitStartMonitoringButton(View view)
@@ -117,6 +94,28 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
             catch (Exception ex)
             {
                 Log.Error(Constants.AppName, $"An error occurred while saving credentials to secure storage {ex}");
+            }
+        }
+
+        private void FillEditTextWithDataIfAvailable()
+        {
+            var channelUrl = SecureStorage.GetAsync("channelUrl").Result;
+            var username = SecureStorage.GetAsync("username").Result;
+            var password = SecureStorage.GetAsync("password").Result;
+
+            if (channelUrl != null)
+            {
+                _channelUrlEditText.Text = channelUrl;
+            }
+
+            if (username != null)
+            {
+                _usernameEditText.Text = username;
+            }
+
+            if (password != null)
+            {
+                _passwordEditText.Text = password;
             }
         }
 
