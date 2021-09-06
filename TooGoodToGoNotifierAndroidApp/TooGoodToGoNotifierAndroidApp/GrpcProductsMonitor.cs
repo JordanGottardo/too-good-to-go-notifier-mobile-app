@@ -119,7 +119,7 @@ namespace TooGoodToGoNotifierAndroidApp
 
         private async Task StartProductsMonitoringAsync()
         {
-            //await EnsureProductMonitoringIsStarted();
+            await EnsureProductMonitoringIsStarted();
 
             using var duplexStream = _productsManagerClient.GetProducts();
             _requestStream = duplexStream.RequestStream;
