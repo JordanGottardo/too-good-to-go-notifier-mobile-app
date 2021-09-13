@@ -19,8 +19,6 @@ namespace TooGoodToGoNotifierAndroidApp
             Log.Debug(Constants.AppName, "ProductMonitorWorker Constructor");
             _context = context;
             _productsMonitor = new GrpcProductsMonitor();
-
-            CreateTestNotification();
         }
 
         public override Result DoWork()
@@ -57,17 +55,6 @@ namespace TooGoodToGoNotifierAndroidApp
         }
 
         #region Utility Methods
-
-        private void CreateTestNotification()
-        {
-            var notificationBuilder = new NotificationCompat.Builder(_context, Constants.NewProductNotificationChannelId)
-                .SetSmallIcon(Resource.Drawable.notification_bg)
-                .SetContentTitle("From ProductMonitorWorker2")
-                .SetContentText("From ProductMonitorWorker2");
-
-            var notificationManager = NotificationManagerCompat.From(_context);
-            notificationManager.Notify(6665, notificationBuilder.Build());
-        }
 
         private void ProductsMonitorOnNewProductAvailable(object sender, ProductResponseEventArgs e)
         {

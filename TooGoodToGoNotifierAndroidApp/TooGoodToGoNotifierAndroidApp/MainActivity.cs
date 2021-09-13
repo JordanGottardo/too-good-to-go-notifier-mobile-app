@@ -191,11 +191,6 @@ namespace TooGoodToGoNotifierAndroidApp
                 Resource.String.product_notification_channel_name,
                 Resource.String.product_notification_channel_description, 
                 Constants.NewProductNotificationChannelId);
-
-            CreateNotificationChannel(
-                Resource.String.foreground_channel_name,
-                Resource.String.foreground_channel_description,
-                Constants.ForegroundServiceNotificationChannelId);
         }
 
         private void CreateNotificationChannel(int channelNameId, int channelDescriptionId, string notificationChannelId)
