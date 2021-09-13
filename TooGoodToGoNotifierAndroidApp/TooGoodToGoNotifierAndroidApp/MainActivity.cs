@@ -207,6 +207,8 @@ namespace TooGoodToGoNotifierAndroidApp
                 Description = description
             };
 
+            channel.SetVibrationPattern(new long[] {0, 300, 100, 150});
+
             var notificationManager = (NotificationManager) GetSystemService(NotificationService);
             notificationManager.CreateNotificationChannel(channel);
         }
