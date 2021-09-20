@@ -65,7 +65,7 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
                 var username = _usernameEditText.Text;
                 
 
-                StopMonitoring(channelUrlAndPort, username);
+                await StopMonitoringAsync(channelUrlAndPort, username);
             }
             catch (Exception ex)
             {
@@ -89,7 +89,7 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
                 await SetInSecureStorage("username", username);
                 await SetInSecureStorage("password", password);
 
-                StartMonitoring(channelUrlAndPort, username, password);
+                await StartMonitoring(channelUrlAndPort, username, password);
             }
             catch (Exception ex)
             {
@@ -124,7 +124,7 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
             await SecureStorage.SetAsync(key, value);
         }
 
-        private void StartMonitoring(string channelUrl, string username, string password)
+        private async Task StartMonitoring(string channelUrl, string username, string password)
         {
             var productsClientFactory = new ProductsClientFactory();
             var productsClient = productsClientFactory.Create(channelUrl);
@@ -133,8 +133,7 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
 
             try
             {
-                productsClient.StartMonitoringAsync(productMonitoringRequest);
-                productsClient.StartMonitoring(productMonitoringRequest);
+                await productsClient.StartMonitoringAsync(productMonitoringRequest);
                 Log.Debug(Constants.AppName, "Start product monitoring successful");
             }
             catch (RpcException e) when (e.StatusCode == StatusCode.AlreadyExists)
@@ -151,7 +150,7 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
             }
         }
 
-        private void StopMonitoring(string channelUrl, string username)
+        private async Task StopMonitoringAsync(string channelUrl, string username)
         {
             var productsClientFactory = new ProductsClientFactory();
             var productsClient = productsClientFactory.Create(channelUrl);
@@ -160,7 +159,7 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
 
             try
             {
-                productsClient.StopMonitoring(productStopMonitoringRequest);
+                await productsClient.StopMonitoringAsync(productStopMonitoringRequest);
                 Log.Debug(Constants.AppName, "Stop product monitoring successful");
             }
             catch (Exception e)
