@@ -11,7 +11,7 @@
 	<TextView
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="Endpoint"/>
+		android:text="@string/server_url"/>
 	<EditText
 		android:inputType="textUri"
 		android:minEms="5"
@@ -22,7 +22,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Username"/>
+        android:text="@string/username"/>
     <EditText
         android:inputType="textEmailAddress"
         android:minEms="5"
@@ -33,7 +33,7 @@
     <TextView
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-	    android:text="Password"
+	    android:text="@string/password"
 	    android:layout_centerInParent="true"/>
     <EditText
         android:inputType="textPassword"
@@ -43,13 +43,13 @@
         android:id="@+id/passwordEditText" />
 
     <Button
-        android:text="Start monitoring"
+        android:text="@string/start_monitoring"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/startMonitoringButton" />
 
 	<Button
-		android:text="Stop monitoring"
+		android:text="@string/stop_monitoring"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:id="@+id/stopMonitoringButton" />

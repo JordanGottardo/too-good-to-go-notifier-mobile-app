@@ -139,7 +139,7 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
             catch (RpcException e) when (e.StatusCode == StatusCode.AlreadyExists)
             {
                 Log.Debug(Constants.AppName, $"Monitoring has already started {e}");
-                var snackBar = Snackbar.Make(_view, Resource.String.start_monitoring_failure_already_started, Snackbar.LengthShort);
+                var snackBar = Snackbar.Make(_view, Resources.GetText(Resource.String.start_monitoring_failure_already_started), Snackbar.LengthShort);
                 snackBar.Show();
             }
             catch (Exception e)

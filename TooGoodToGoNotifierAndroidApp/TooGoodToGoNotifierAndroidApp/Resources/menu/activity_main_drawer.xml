@@ -7,7 +7,7 @@
 	    <item
             android:id="@+id/nav_gallery"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Settings" />
+            android:title="@string/settings" />
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_menu_slideshow"
@@ -19,7 +19,7 @@
 	        <item
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"
-                android:title="About" />
+                android:title="@string/about" />
         </menu>
     </item>
 

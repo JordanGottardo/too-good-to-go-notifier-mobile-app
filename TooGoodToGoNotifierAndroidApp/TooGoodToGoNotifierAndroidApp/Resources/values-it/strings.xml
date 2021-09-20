@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">TgtgNotifier</string>
+    <string name="navigation_drawer_open">Apri menù di navigazione</string>
+    <string name="navigation_drawer_close">Chiudi menù di navigazione</string>
+    <string name="action_settings">Monitoraggio</string>
+    <string name="product_notification_channel_name">Canale di notifica di prodotti</string>
+    <string name="product_notification_channel_description">Invia notifiche di prodotti</string>
+	<string name="start_monitoring_failure">Fallimento durante l\'avvio del monitoraggio</string>
+	<string name="start_monitoring_failure_already_started">Il monitoraggio è già in corso</string>
+	<string name="stop_monitoring_failure">Fallimento durante l\'arresto del monitoraggio</string>
+	<string name="products_fragment">Frammento prodotti1</string>
+	<string name="settings">Impostazioni</string>
+	<string name="about">About</string>
+	<string name="server_url">URL del server (url:porta)</string>
+	<string name="username">Username</string>
+	<string name="password">Password</string>
+	<string name="start_monitoring">Inizia monitoraggio</string>
+	<string name="stop_monitoring">Arresta monitoraggio</string>
+
+</resources>

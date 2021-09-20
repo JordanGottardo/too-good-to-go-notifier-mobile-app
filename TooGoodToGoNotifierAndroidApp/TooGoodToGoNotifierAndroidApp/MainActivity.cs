@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using Android.App;
+using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Util;
@@ -20,7 +21,12 @@ using FragmentTransaction = AndroidX.Fragment.App.FragmentTransaction;
 
 namespace TooGoodToGoNotifierAndroidApp
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
+    [Activity(
+        Label = "@string/app_name", 
+        Theme = "@style/AppTheme.NoActionBar", 
+        MainLauncher = true,
+        ConfigurationChanges = ConfigChanges.Locale
+    )]
     [SuppressMessage("ReSharper", "UnusedType.Global")]
     [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
