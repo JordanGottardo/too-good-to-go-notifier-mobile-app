@@ -11,9 +11,7 @@ using AndroidX.AppCompat.Widget;
 using AndroidX.Core.View;
 using AndroidX.DrawerLayout.Widget;
 using AndroidX.Work;
-using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.Navigation;
-using Google.Android.Material.Snackbar;
 using TooGoodToGoNotifierAndroidApp.Fragments;
 using Xamarin.Essentials;
 using Fragment = AndroidX.Fragment.App.Fragment;
@@ -53,9 +51,6 @@ namespace TooGoodToGoNotifierAndroidApp
             InitFragments();
             CreateNotificationChannels();
             InitProductsMonitoring();
-
-            var fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
-            fab.Click += FabOnClick;
 
             var drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             var toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
@@ -119,7 +114,7 @@ namespace TooGoodToGoNotifierAndroidApp
             return true;
         }
 
-        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
         {
             Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
@@ -162,13 +157,6 @@ namespace TooGoodToGoNotifierAndroidApp
             action(transaction);
 
             transaction.Commit();
-        }
-
-        private static void FabOnClick(object sender, EventArgs eventArgs)
-        {
-            var view = (View)sender;
-            Snackbar.Make(view, "Replace with your own action", Snackbar.LengthLong)
-                .SetAction("Action", (View.IOnClickListener)null).Show();
         }
 
         private void InitProductsMonitoring()
