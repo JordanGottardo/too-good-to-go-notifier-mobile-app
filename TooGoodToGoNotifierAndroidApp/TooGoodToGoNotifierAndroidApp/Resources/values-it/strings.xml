@@ -6,7 +6,8 @@
     <string name="product_notification_channel_name">Canale di notifica di prodotti</string>
     <string name="product_notification_channel_description">Invia notifiche di prodotti</string>
 	<string name="start_monitoring_failure">Fallimento durante l\'avvio del monitoraggio</string>
-	<string name="start_monitoring_failure_already_started">Il monitoraggio è già in corso</string>
+	<string name="start_monitoring_failure_already_started">Il monitoraggio è già in corso!</string>
+	<string name="start_monitoring_failure_wrong_credentials">Credenziali TooGoodToGo errate</string>
 	<string name="stop_monitoring_failure">Fallimento durante l\'arresto del monitoraggio</string>
 	<string name="products_fragment">Frammento prodotti1</string>
 	<string name="settings">Impostazioni</string>

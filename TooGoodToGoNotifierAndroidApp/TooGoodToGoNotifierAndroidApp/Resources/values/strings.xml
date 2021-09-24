@@ -7,6 +7,7 @@
     <string name="product_notification_channel_description">Dispatches product notifications</string>
 	<string name="start_monitoring_failure">Start products monitoring failure</string>
 	<string name="start_monitoring_failure_already_started">Product monitoring already in progress</string>
+	<string name="start_monitoring_failure_wrong_credentials">Wrong TooGoodToGo credentials</string>
 	<string name="stop_monitoring_failure">Stop monitor products failure</string>
 	<string name="products_fragment">Product fragment1</string>
 	<string name="settings">Settings</string>

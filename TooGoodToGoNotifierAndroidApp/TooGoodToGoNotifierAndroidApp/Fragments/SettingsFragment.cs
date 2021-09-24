@@ -142,6 +142,12 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
                 var snackBar = Snackbar.Make(_view, Resources.GetText(Resource.String.start_monitoring_failure_already_started), Snackbar.LengthShort);
                 snackBar.Show();
             }
+            catch (RpcException e) when (e.StatusCode == StatusCode.Unauthenticated)
+            {
+                Log.Debug(Constants.AppName, $"Wrong TgTg credentials {e}");
+                var snackBar = Snackbar.Make(_view, Resources.GetText(Resource.String.start_monitoring_failure_already_started), Snackbar.LengthShort);
+                snackBar.Show();
+            }
             catch (Exception e)
             {
                 Log.Error(Constants.AppName, $"An error occurred while starting monitoring {e}");

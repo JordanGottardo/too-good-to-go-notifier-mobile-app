@@ -4741,16 +4741,19 @@ namespace TooGoodToGoNotifierAndroidApp
 			public const int start_monitoring_failure_already_started = 2131623994;
 			
 			// aapt resource value: 0x7F0E003B
-			public const int status_bar_notification_info_overflow = 2131623995;
+			public const int start_monitoring_failure_wrong_credentials = 2131623995;
 			
 			// aapt resource value: 0x7F0E003C
-			public const int stop_monitoring = 2131623996;
+			public const int status_bar_notification_info_overflow = 2131623996;
 			
 			// aapt resource value: 0x7F0E003D
-			public const int stop_monitoring_failure = 2131623997;
+			public const int stop_monitoring = 2131623997;
 			
 			// aapt resource value: 0x7F0E003E
-			public const int username = 2131623998;
+			public const int stop_monitoring_failure = 2131623998;
+			
+			// aapt resource value: 0x7F0E003F
+			public const int username = 2131623999;
 			
 			static String()
 			{
