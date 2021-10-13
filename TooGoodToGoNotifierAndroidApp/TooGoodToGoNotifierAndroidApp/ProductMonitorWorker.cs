@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Threading.Tasks;
+using Android.App;
 using Android.Content;
 using Android.Util;
 using AndroidX.Core.App;
@@ -62,8 +64,8 @@ namespace TooGoodToGoNotifierAndroidApp
 
             var notificationBuilder = new NotificationCompat.Builder(_context, Constants.NewProductNotificationChannelId)
                 .SetSmallIcon(Resource.Drawable.notification_bg)
-                .SetContentTitle("New product available")
-                .SetContentText($"Item {e.Id} available at € {e.Price} in {e.StoreName} store");
+                .SetContentTitle(_context.GetString(Resource.String.new_product_available_title))
+                .SetContentText(_context.GetString(Resource.String.new_product_available_text, e.Id, e.Price.ToString(CultureInfo.InvariantCulture), e.StoreName));
 
             var notificationManager = NotificationManagerCompat.From(_context);
             notificationManager.Notify(int.Parse(e.Id), notificationBuilder.Build());

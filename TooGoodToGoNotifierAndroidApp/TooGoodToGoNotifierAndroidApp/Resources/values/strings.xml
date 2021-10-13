@@ -17,6 +17,7 @@
 	<string name="password">Password</string>
 	<string name="start_monitoring">Start monitoring</string>
 	<string name="stop_monitoring">Stop monitoring</string>
-
+	<string name="new_product_available_title">New product available</string>
+	<string name="new_product_available_text">Product %1$s available at € %2$s in %3$s store</string>
 
 </resources>
