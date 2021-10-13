@@ -18,5 +18,5 @@
 	<string name="start_monitoring">Inizia monitoraggio</string>
 	<string name="stop_monitoring">Arresta monitoraggio</string>
 	<string name="new_product_available_title">Nuovo prodotto disponibile</string>
-	<string name="new_product_available_text">Prodotto %1$s disponibile a € %2$s nel negozio %3$s</string>
+	<string name="new_product_available_text">Prodotto disponibile a %1$s€ nel negozio %2$s</string>
 </resources>

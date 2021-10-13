@@ -65,7 +65,7 @@ namespace TooGoodToGoNotifierAndroidApp
             var notificationBuilder = new NotificationCompat.Builder(_context, Constants.NewProductNotificationChannelId)
                 .SetSmallIcon(Resource.Drawable.notification_bg)
                 .SetContentTitle(_context.GetString(Resource.String.new_product_available_title))
-                .SetContentText(_context.GetString(Resource.String.new_product_available_text, e.Id, e.Price.ToString(CultureInfo.InvariantCulture), e.StoreName));
+                .SetContentText(_context.GetString(Resource.String.new_product_available_text, e.Price.ToString(CultureInfo.InvariantCulture), e.StoreName));
 
             var notificationManager = NotificationManagerCompat.From(_context);
             notificationManager.Notify(int.Parse(e.Id), notificationBuilder.Build());

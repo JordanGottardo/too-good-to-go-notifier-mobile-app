@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -258,7 +259,7 @@ namespace TooGoodToGoNotifierAndroidApp
         private static decimal GetPrice(ProductResponse productResponse)
         {
             var price = productResponse.Price.ToString();
-            return decimal.Parse(price.Insert(price.Length - productResponse.Decimals, "."));
+            return decimal.Parse(price.Insert(price.Length - productResponse.Decimals, "."), CultureInfo.InvariantCulture);
         }
 
         protected virtual void OnNewProductAvailable(ProductResponseEventArgs e)
