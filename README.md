@@ -1,8 +1,11 @@
-**TgTgNotifier** is a mobile Android application which sends a notification when your favourite products are available on [TooGoodToGo](https://toogoodtogo.com/en-us). 
+**TgTgNotifier** is a mobile Android application which sends a notification when your favourite products are available on [TooGoodToGo](https://toogoodtogo.com/en-us). This app has been developed using [Xamarin.Android](https://docs.microsoft.com/en-us/xamarin/android/).
+
+## Architecture
 
 This application is client of [**TooGoodToGo Cloud Notifier**](https://github.com/JordanGottardo/too-good-to-go-cloud-notifier) server component and requires it in order to function correctly.
+Below you can see an high level system architecture.
 
-This app has been developed using [Xamarin.Android](https://docs.microsoft.com/en-us/xamarin/android/).
+<img src="images/architecture.png" />
 
 # Installation
 You can install [TgTgNotifier directly from the Google Play Store](https://play.google.com/store/apps/details?id=com.jordangottardo.tgtgnotifier) (available in Italian and English).
