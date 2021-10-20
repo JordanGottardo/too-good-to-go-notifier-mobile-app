@@ -23,7 +23,8 @@ namespace TooGoodToGoNotifierAndroidApp
         Label = "@string/app_name", 
         Theme = "@style/AppTheme.NoActionBar", 
         MainLauncher = true,
-        ConfigurationChanges = ConfigChanges.Locale
+        ConfigurationChanges = ConfigChanges.Locale,
+        Icon = "@drawable/app_icon"
     )]
     [SuppressMessage("ReSharper", "UnusedType.Global")]
     [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
