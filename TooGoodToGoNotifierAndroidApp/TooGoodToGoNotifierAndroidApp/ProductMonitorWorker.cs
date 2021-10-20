@@ -63,7 +63,7 @@ namespace TooGoodToGoNotifierAndroidApp
             Log.Debug(Constants.AppName, "ProductService: received new product available");
 
             var notificationBuilder = new NotificationCompat.Builder(_context, Constants.NewProductNotificationChannelId)
-                .SetSmallIcon(Resource.Drawable.notification_bg)
+                .SetSmallIcon(Resource.Drawable.notification_icon)
                 .SetContentTitle(_context.GetString(Resource.String.new_product_available_title))
                 .SetContentText(_context.GetString(Resource.String.new_product_available_text, e.Price.ToString(CultureInfo.InvariantCulture), e.StoreName));
 
