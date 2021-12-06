@@ -19,7 +19,6 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
 
         private EditText _channelUrlEditText;
         private EditText _usernameEditText;
-        private EditText _passwordEditText;
         private View _view;
 
         #endregion
@@ -30,7 +29,6 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
 
             _channelUrlEditText = _view.FindViewById<EditText>(Resource.Id.channelUrlEditText);
             _usernameEditText = _view.FindViewById<EditText>(Resource.Id.usernameEditText);
-            _passwordEditText = _view.FindViewById<EditText>(Resource.Id.passwordEditText);
 
             FillEditTextWithDataIfAvailable();
             InitStartMonitoringButton(_view);
@@ -79,7 +77,6 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
 
             var channelUrlAndPort = _channelUrlEditText.Text;
             var username = _usernameEditText.Text;
-            var password = _passwordEditText.Text;
 
             try
             {
@@ -87,9 +84,8 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
 
                 await SetInSecureStorage("channelUrl", channelUrlAndPort);
                 await SetInSecureStorage("username", username);
-                await SetInSecureStorage("password", password);
 
-                await StartMonitoring(channelUrlAndPort, username, password);
+                await StartMonitoring(channelUrlAndPort, username);
             }
             catch (Exception ex)
             {
@@ -101,7 +97,6 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
         {
             var channelUrl = SecureStorage.GetAsync("channelUrl").Result;
             var username = SecureStorage.GetAsync("username").Result;
-            var password = SecureStorage.GetAsync("password").Result;
 
             if (channelUrl != null)
             {
@@ -112,11 +107,6 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
             {
                 _usernameEditText.Text = username;
             }
-
-            if (password != null)
-            {
-                _passwordEditText.Text = password;
-            }
         }
 
         private static async Task SetInSecureStorage(string key, string value)
@@ -124,12 +114,12 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
             await SecureStorage.SetAsync(key, value);
         }
 
-        private async Task StartMonitoring(string channelUrl, string username, string password)
+        private async Task StartMonitoring(string channelUrl, string username)
         {
             var productsClientFactory = new ProductsClientFactory();
             var productsClient = productsClientFactory.Create(channelUrl);
 
-            var productMonitoringRequest = CreateProductMonitoringRequest(username, password);
+            var productMonitoringRequest = CreateProductMonitoringRequest(username);
 
             try
             {
@@ -176,12 +166,11 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
             }
         }
 
-        private static ProductMonitoringRequest CreateProductMonitoringRequest(string username, string password)
+        private static ProductMonitoringRequest CreateProductMonitoringRequest(string username)
         {
             return new ProductMonitoringRequest
             {
                 Username = username,
-                Password = password
             };
         }
 

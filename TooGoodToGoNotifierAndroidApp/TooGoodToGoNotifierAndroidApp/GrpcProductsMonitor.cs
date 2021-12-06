@@ -152,9 +152,8 @@ namespace TooGoodToGoNotifierAndroidApp
             Log.Debug(Constants.AppName, $"{nameof(GrpcProductsMonitor)} ensuring product monitoring is started");
 
             var username = await GetFromSecureStorage("username");
-            var password = await GetFromSecureStorage("password");
 
-            var productMonitorRequest = CreateProductMonitorRequest(username, password);
+            var productMonitorRequest = CreateProductMonitorRequest(username);
 
             try
             {
@@ -165,12 +164,11 @@ namespace TooGoodToGoNotifierAndroidApp
             }
         }
 
-        private static ProductMonitoringRequest CreateProductMonitorRequest(string username, string password)
+        private static ProductMonitoringRequest CreateProductMonitorRequest(string username)
         {
             return new ProductMonitoringRequest
             {
                 Username = username,
-                Password = password
             };
         }
 

@@ -30,19 +30,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/usernameEditText" />
 
-    <TextView
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:text="@string/password"
-	    android:layout_centerInParent="true"/>
-    <EditText
-        android:inputType="textPassword"
-        android:minEms="5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/passwordEditText" />
-
-    <Button
+	<Button
         android:text="@string/start_monitoring"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
