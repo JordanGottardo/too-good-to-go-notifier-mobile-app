@@ -1,9 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
-using Android.OS;
-using Android.Util;
+﻿using Android.OS;
 using Android.Views;
-using Grpc.Core;
 using Fragment = AndroidX.Fragment.App.Fragment;
 
 namespace TooGoodToGoNotifierAndroidApp.Fragments
