@@ -14,8 +14,11 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
     public class SettingsFragment : Fragment
     {
         #region Private fields
-
-        private EditText _channelUrlEditText;
+        
+        private const string ServerUrlKey = "serverUrl";
+        private const string UsernameKey = "username";
+        private const string StopMonitoringKey = "stopMonitoring";
+        private EditText _serverUrlEditText;
         private EditText _usernameEditText;
         private View _view;
 
@@ -25,7 +28,7 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
         {
             _view = inflater.Inflate(Resource.Layout.fragment_settings, container, false);
 
-            _channelUrlEditText = _view.FindViewById<EditText>(Resource.Id.channelUrlEditText);
+            _serverUrlEditText = _view.FindViewById<EditText>(Resource.Id.serverUrlEditText);
             _usernameEditText = _view.FindViewById<EditText>(Resource.Id.usernameEditText);
 
             FillEditTextWithDataIfAvailable();
@@ -55,13 +58,8 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
 
             try
             {
-                await SetInSecureStorage("stopMonitoring", bool.TrueString);
+                await SetInSecureStorage(StopMonitoringKey, bool.TrueString);
 
-                var channelUrlAndPort = _channelUrlEditText.Text;
-                var username = _usernameEditText.Text;
-                
-
-                // await StopMonitoringAsync(channelUrlAndPort, username);
             }
             catch (Exception ex)
             {
@@ -73,17 +71,16 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
         {
             Log.Debug(Constants.AppName, "StartMonitoringButtonOnClickAsync");
 
-            var channelUrlAndPort = _channelUrlEditText.Text;
+            var serverUrl = _serverUrlEditText.Text;
             var username = _usernameEditText.Text;
 
             try
             {
-                await SetInSecureStorage("stopMonitoring", bool.FalseString);
+                await SetInSecureStorage(StopMonitoringKey, bool.FalseString);
 
-                await SetInSecureStorage("channelUrl", channelUrlAndPort);
-                await SetInSecureStorage("username", username);
+                await SetInSecureStorage(ServerUrlKey, serverUrl);
+                await SetInSecureStorage(UsernameKey, username);
 
-                // await StartMonitoring(channelUrlAndPort, username);
             }
             catch (Exception ex)
             {
@@ -93,12 +90,12 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
 
         private void FillEditTextWithDataIfAvailable()
         {
-            var channelUrl = SecureStorage.GetAsync("channelUrl").Result;
-            var username = SecureStorage.GetAsync("username").Result;
+            var serverUrl = SecureStorage.GetAsync(ServerUrlKey).Result;
+            var username = SecureStorage.GetAsync(UsernameKey).Result;
 
-            if (channelUrl != null)
+            if (serverUrl != null)
             {
-                _channelUrlEditText.Text = channelUrl;
+                _serverUrlEditText.Text = serverUrl;
             }
 
             if (username != null)
@@ -111,74 +108,6 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
         {
             await SecureStorage.SetAsync(key, value);
         }
-
-        // private async Task StartMonitoring(string channelUrl, string username)
-        // {
-        //     var productsClientFactory = new ProductsClientFactory();
-        //     var productsClient = productsClientFactory.Create(channelUrl);
-        //
-        //     var productMonitoringRequest = CreateProductMonitoringRequest(username);
-        //
-        //     try
-        //     {
-        //         await productsClient.StartMonitoringAsync(productMonitoringRequest);
-        //         Log.Debug(Constants.AppName, "Start product monitoring successful");
-        //     }
-        //     // catch (RpcException e) when (e.StatusCode == StatusCode.AlreadyExists)
-        //     // {
-        //     //     Log.Debug(Constants.AppName, $"Monitoring has already started {e}");
-        //     //     var snackBar = Snackbar.Make(_view, Resources.GetText(Resource.String.start_monitoring_failure_already_started), Snackbar.LengthShort);
-        //     //     snackBar.Show();
-        //     // }
-        //     // catch (RpcException e) when (e.StatusCode == StatusCode.Unauthenticated)
-        //     // {
-        //     //     Log.Debug(Constants.AppName, $"Wrong TgTg credentials {e}");
-        //     //     var snackBar = Snackbar.Make(_view, Resources.GetText(Resource.String.start_monitoring_failure_already_started), Snackbar.LengthShort);
-        //     //     snackBar.Show();
-        //     // }
-        //     catch (Exception e)
-        //     {
-        //         Log.Error(Constants.AppName, $"An error occurred while starting monitoring {e}");
-        //         var snackBar = Snackbar.Make(_view, Resource.String.start_monitoring_failure, Snackbar.LengthShort);
-        //         snackBar.Show();
-        //     }
-        // }
-        //
-        // private async Task StopMonitoringAsync(string channelUrl, string username)
-        // {
-        //     var productsClientFactory = new ProductsClientFactory();
-        //     var productsClient = productsClientFactory.Create(channelUrl);
-        //
-        //     var productStopMonitoringRequest = CreateProductStopMonitoringRequest(username);
-        //
-        //     try
-        //     {
-        //         await productsClient.StopMonitoringAsync(productStopMonitoringRequest);
-        //         Log.Debug(Constants.AppName, "Stop product monitoring successful");
-        //     }
-        //     catch (Exception e)
-        //     {
-        //         Log.Debug(Constants.AppName, $"An error occurred while stopping monitoring {e}");
-        //         var snackBar = Snackbar.Make(_view, Resource.String.stop_monitoring_failure, Snackbar.LengthShort);
-        //         snackBar.Show();
-        //     }
-        // }
-        //
-        // private static ProductMonitoringRequest CreateProductMonitoringRequest(string username)
-        // {
-        //     return new ProductMonitoringRequest
-        //     {
-        //         Username = username,
-        //     };
-        // }
-        //
-        // private static ProductStopMonitoringRequest CreateProductStopMonitoringRequest(string username)
-        // {
-        //     return new ProductStopMonitoringRequest
-        //     {
-        //         Username = username,
-        //     };
-        // }
 
         #endregion
     }
