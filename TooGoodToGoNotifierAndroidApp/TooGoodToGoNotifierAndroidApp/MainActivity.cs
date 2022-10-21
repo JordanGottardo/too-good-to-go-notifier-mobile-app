@@ -12,6 +12,7 @@ using AndroidX.Core.View;
 using AndroidX.DrawerLayout.Widget;
 using AndroidX.Work;
 using Google.Android.Material.Navigation;
+using Plugin.FirebasePushNotification;
 using TooGoodToGoNotifierAndroidApp.Fragments;
 using Xamarin.Essentials;
 using Fragment = AndroidX.Fragment.App.Fragment;
@@ -60,6 +61,8 @@ namespace TooGoodToGoNotifierAndroidApp
 
             var navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
             navigationView.SetNavigationItemSelectedListener(this);
+
+            FirebasePushNotificationManager.ProcessIntent(this, Intent);
         }
 
         public override void OnBackPressed()
