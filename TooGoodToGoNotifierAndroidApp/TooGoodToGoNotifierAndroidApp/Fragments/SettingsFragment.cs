@@ -32,6 +32,7 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
             _usernameEditText = _view.FindViewById<EditText>(Resource.Id.usernameEditText);
 
             FillEditTextWithDataIfAvailable();
+            InitSubscribeButton(_view);
             InitStartMonitoringButton(_view);
             InitStopMonitoringButton(_view);
 
@@ -39,6 +40,12 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
         }
 
         #region Utility Methods
+
+        private void InitSubscribeButton(View view)
+        {
+            var subscribeButton = view.FindViewById<Button>(Resource.Id.subscribeButton);
+            subscribeButton.Click += SubscribeButtonOnClickAsync;
+        }
 
         private void InitStartMonitoringButton(View view)
         {
@@ -64,6 +71,30 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
             catch (Exception ex)
             {
                 Log.Error(Constants.AppName, $"An error occurred while saving credentials to secure storage {ex}");
+            }
+        }
+
+        private async void SubscribeButtonOnClickAsync(object sender, EventArgs e)
+        {
+            Log.Debug(Constants.AppName, "SubscribeButtonOnClickAsync");
+
+            var serverUrl = _serverUrlEditText.Text;
+            var username = _usernameEditText.Text;
+
+            try
+            {
+
+                await SetInSecureStorage(ServerUrlKey, serverUrl);
+                await SetInSecureStorage(UsernameKey, username);
+
+                var productsClient = new ProductsClient();
+
+                await productsClient.SubscribeUser();
+
+            }
+            catch (Exception ex)
+            {
+                Log.Error(Constants.AppName, $"An error occurred subscribing user {ex}");
             }
         }
 

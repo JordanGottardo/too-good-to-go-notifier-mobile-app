@@ -30,6 +30,12 @@
         android:layout_height="wrap_content"
         android:id="@+id/usernameEditText" />
 
+    <Button
+        android:text="@string/subscribe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/subscribeButton" />
+
 	<Button
         android:text="@string/start_monitoring"
         android:layout_width="wrap_content"
