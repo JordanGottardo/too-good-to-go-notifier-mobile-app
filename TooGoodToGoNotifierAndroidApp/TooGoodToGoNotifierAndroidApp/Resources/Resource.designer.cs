@@ -5173,103 +5173,124 @@ namespace TooGoodToGoNotifierAndroidApp
 			public const int copy_toast_msg = 2131623988;
 			
 			// aapt resource value: 0x7F0E0035
-			public const int fab_transformation_scrim_behavior = 2131623989;
+			public const int default_web_client_id = 2131623989;
 			
 			// aapt resource value: 0x7F0E0036
-			public const int fab_transformation_sheet_behavior = 2131623990;
+			public const int fab_transformation_scrim_behavior = 2131623990;
 			
 			// aapt resource value: 0x7F0E0037
-			public const int fallback_menu_item_copy_link = 2131623991;
+			public const int fab_transformation_sheet_behavior = 2131623991;
 			
 			// aapt resource value: 0x7F0E0038
-			public const int fallback_menu_item_open_in_browser = 2131623992;
+			public const int fallback_menu_item_copy_link = 2131623992;
 			
 			// aapt resource value: 0x7F0E0039
-			public const int fallback_menu_item_share_link = 2131623993;
+			public const int fallback_menu_item_open_in_browser = 2131623993;
 			
 			// aapt resource value: 0x7F0E003A
-			public const int fcm_fallback_notification_channel_label = 2131623994;
+			public const int fallback_menu_item_share_link = 2131623994;
 			
 			// aapt resource value: 0x7F0E003B
-			public const int hide_bottom_view_on_scroll_behavior = 2131623995;
+			public const int fcm_fallback_notification_channel_label = 2131623995;
 			
 			// aapt resource value: 0x7F0E003C
-			public const int mtrl_chip_close_icon_content_description = 2131623996;
+			public const int gcm_defaultSenderId = 2131623996;
 			
 			// aapt resource value: 0x7F0E003D
-			public const int navigation_drawer_close = 2131623997;
+			public const int google_api_key = 2131623997;
 			
 			// aapt resource value: 0x7F0E003E
-			public const int navigation_drawer_open = 2131623998;
+			public const int google_app_id = 2131623998;
 			
 			// aapt resource value: 0x7F0E003F
-			public const int new_product_available_text = 2131623999;
+			public const int google_crash_reporting_api_key = 2131623999;
 			
 			// aapt resource value: 0x7F0E0040
-			public const int new_product_available_title = 2131624000;
+			public const int google_storage_bucket = 2131624000;
 			
 			// aapt resource value: 0x7F0E0041
-			public const int password = 2131624001;
+			public const int hide_bottom_view_on_scroll_behavior = 2131624001;
 			
 			// aapt resource value: 0x7F0E0042
-			public const int password_toggle_content_description = 2131624002;
+			public const int mtrl_chip_close_icon_content_description = 2131624002;
 			
 			// aapt resource value: 0x7F0E0043
-			public const int path_password_eye = 2131624003;
+			public const int navigation_drawer_close = 2131624003;
 			
 			// aapt resource value: 0x7F0E0044
-			public const int path_password_eye_mask_strike_through = 2131624004;
+			public const int navigation_drawer_open = 2131624004;
 			
 			// aapt resource value: 0x7F0E0045
-			public const int path_password_eye_mask_visible = 2131624005;
+			public const int new_product_available_text = 2131624005;
 			
 			// aapt resource value: 0x7F0E0046
-			public const int path_password_strike_through = 2131624006;
-			
-			// aapt resource value: 0x7F0E0049
-			public const int products_fragment = 2131624009;
+			public const int new_product_available_title = 2131624006;
 			
 			// aapt resource value: 0x7F0E0047
-			public const int product_notification_channel_description = 2131624007;
+			public const int password = 2131624007;
 			
 			// aapt resource value: 0x7F0E0048
-			public const int product_notification_channel_name = 2131624008;
+			public const int password_toggle_content_description = 2131624008;
+			
+			// aapt resource value: 0x7F0E0049
+			public const int path_password_eye = 2131624009;
 			
 			// aapt resource value: 0x7F0E004A
-			public const int search_menu_title = 2131624010;
+			public const int path_password_eye_mask_strike_through = 2131624010;
 			
 			// aapt resource value: 0x7F0E004B
-			public const int server_url = 2131624011;
+			public const int path_password_eye_mask_visible = 2131624011;
 			
 			// aapt resource value: 0x7F0E004C
-			public const int settings = 2131624012;
-			
-			// aapt resource value: 0x7F0E004D
-			public const int start_monitoring = 2131624013;
-			
-			// aapt resource value: 0x7F0E004E
-			public const int start_monitoring_failure = 2131624014;
+			public const int path_password_strike_through = 2131624012;
 			
 			// aapt resource value: 0x7F0E004F
-			public const int start_monitoring_failure_already_started = 2131624015;
+			public const int products_fragment = 2131624015;
+			
+			// aapt resource value: 0x7F0E004D
+			public const int product_notification_channel_description = 2131624013;
+			
+			// aapt resource value: 0x7F0E004E
+			public const int product_notification_channel_name = 2131624014;
 			
 			// aapt resource value: 0x7F0E0050
-			public const int start_monitoring_failure_wrong_credentials = 2131624016;
+			public const int project_id = 2131624016;
 			
 			// aapt resource value: 0x7F0E0051
-			public const int status_bar_notification_info_overflow = 2131624017;
+			public const int search_menu_title = 2131624017;
 			
 			// aapt resource value: 0x7F0E0052
-			public const int stop_monitoring = 2131624018;
+			public const int server_url = 2131624018;
 			
 			// aapt resource value: 0x7F0E0053
-			public const int stop_monitoring_failure = 2131624019;
+			public const int settings = 2131624019;
 			
 			// aapt resource value: 0x7F0E0054
-			public const int subscribe = 2131624020;
+			public const int start_monitoring = 2131624020;
 			
 			// aapt resource value: 0x7F0E0055
-			public const int username = 2131624021;
+			public const int start_monitoring_failure = 2131624021;
+			
+			// aapt resource value: 0x7F0E0056
+			public const int start_monitoring_failure_already_started = 2131624022;
+			
+			// aapt resource value: 0x7F0E0057
+			public const int start_monitoring_failure_wrong_credentials = 2131624023;
+			
+			// aapt resource value: 0x7F0E0058
+			public const int status_bar_notification_info_overflow = 2131624024;
+			
+			// aapt resource value: 0x7F0E0059
+			public const int stop_monitoring = 2131624025;
+			
+			// aapt resource value: 0x7F0E005A
+			public const int stop_monitoring_failure = 2131624026;
+			
+			// aapt resource value: 0x7F0E005B
+			public const int subscribe = 2131624027;
+			
+			// aapt resource value: 0x7F0E005C
+			public const int username = 2131624028;
 			
 			static String()
 			{

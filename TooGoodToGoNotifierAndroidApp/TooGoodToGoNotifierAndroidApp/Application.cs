@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.OS;
 using Android.Runtime;
+using Android.Util;
 using Plugin.FirebasePushNotification;
 using System;
 
@@ -39,6 +40,7 @@ namespace TooGoodToGoNotifierAndroidApp
               FirebasePushNotificationManager.Initialize(this,false);
 #endif
 
+
             //Handle notification when app is closed here
             CrossFirebasePushNotification.Current.OnNotificationReceived += (s, p) =>
             {
@@ -46,7 +48,14 @@ namespace TooGoodToGoNotifierAndroidApp
 
             };
 
+            CrossFirebasePushNotification.Current.OnTokenRefresh += OnTokenRefresh;
 
+
+        }
+
+        private void OnTokenRefresh(object source, FirebasePushNotificationTokenEventArgs e)
+        {
+            Log.Info(Constants.AppName, $"Received new token {e.Token}");
         }
     }
 }
