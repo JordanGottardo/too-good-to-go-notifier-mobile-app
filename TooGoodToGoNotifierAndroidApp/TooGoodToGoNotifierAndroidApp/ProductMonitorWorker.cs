@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using Android.Content;
@@ -26,29 +27,41 @@ namespace TooGoodToGoNotifierAndroidApp
 
         public override Result DoWork()
         {
-            Log.Debug(Constants.AppName, "ProductMonitorWorker DoWork");
-
-            var stopMonitoring = bool.Parse(SecureStorage.GetAsync(StopMonitoringKey).Result);
-
-            if (stopMonitoring)
+            try
             {
-                Log.Debug(Constants.AppName, "ProductMonitorWorker: monitoring is stopped. Not retrieving products");
+                Log.Debug(Constants.AppName, "ProductMonitorWorker DoWork");
+
+                var stopMonitoringValue = SecureStorage.GetAsync(StopMonitoringKey).Result;
+
+                var stopMonitoring = stopMonitoringValue is null ? false : bool.Parse(stopMonitoringValue);
+
+                if (stopMonitoring)
+                {
+                    Log.Debug(Constants.AppName, "ProductMonitorWorker: monitoring is stopped. Not retrieving products");
+
+                    return Result.InvokeSuccess();
+                }
+
+                Log.Debug(Constants.AppName, "ProductMonitorWorker: monitoring is started. Retrieving products");
+
+                var availableProducts = _productsClient.GetAvailableProducts().Result.ToList();
+
+                Log.Debug(Constants.AppName, $"ProductMonitorWorker: retrieved {availableProducts.Count} products");
+
+                foreach (var availableProduct in availableProducts)
+                {
+                    DisplayAvailableProduct(availableProduct);
+                }
 
                 return Result.InvokeSuccess();
             }
-            
-            Log.Debug(Constants.AppName, "ProductMonitorWorker: monitoring is started. Retrieving products");
-
-            var availableProducts = _productsClient.GetAvailableProducts().Result.ToList();
-            
-            Log.Debug(Constants.AppName, $"ProductMonitorWorker: retrieved {availableProducts.Count} products");
-
-            foreach (var availableProduct in availableProducts)
+            catch (Exception e)
             {
-                DisplayAvailableProduct(availableProduct);
+                Log.Error(Constants.AppName, $"ProductMonitorWorker: an error occurred while executing DoWork due to {e}");
+
+                return Result.InvokeFailure();
             }
-            
-            return Result.InvokeSuccess();
+
         }
 
         #region Utility Methods
