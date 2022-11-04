@@ -27,7 +27,7 @@ namespace TooGoodToGoNotifierAndroidApp
         {
             try
             {
-                var uri = await GetUsersUrl();
+                var uri = await GetUrl("tokens/update");
 
                 var response = await _client.PostAsync(uri, null);
 
@@ -48,11 +48,35 @@ namespace TooGoodToGoNotifierAndroidApp
             }
         }
 
+        public async Task<bool> IsUserSubscribed()
+        {
+            try
+            {
+                var uri = await GetUrl("tokens");
+
+                var response = await _client.GetAsync(uri);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Log.Error(Constants.AppName, $"An error occurred retrieving tokens from user: {response.StatusCode} ReasonPhrase: {response.ReasonPhrase}");
+
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Log.Error(Constants.AppName, $"An error occurred while retrieving products {e}");
+                return false;
+            }
+        }
+
         public async Task<IEnumerable<ProductDto>> GetAvailableProducts()
         {
             try
             {
-                var uri = await GetProductsUrl();
+                var uri = await GetUrl("products");
 
                 var response = await _client.GetAsync(uri);
 
@@ -75,35 +99,19 @@ namespace TooGoodToGoNotifierAndroidApp
             }
         }
 
-        private static async Task<Uri> GetUsersUrl()
+        private static async Task<Uri> GetUrl(string path)
         {
             var serverUrl = await SecureStorage.GetAsync(ServerUrlKey);
             var username = await SecureStorage.GetAsync(UsernameKey);
 
             var uri = new UriBuilder(serverUrl)
             {
-                Path = "tokens/update",
+                Path = path,
                 Query = $"userEmail={username}"
             }.Uri;
 
             Log.Info(Constants.AppName, $"uri={uri}");
 
-            return uri;
-        }
-
-        private static async Task<Uri> GetProductsUrl()
-        {
-            var serverUrl = await SecureStorage.GetAsync(ServerUrlKey);
-            var username = await SecureStorage.GetAsync(UsernameKey);
-
-            var uri = new UriBuilder(serverUrl)
-            {
-                Path = "products",
-                Query = $"userEmail={username}"
-            }.Uri;
-
-            Log.Info(Constants.AppName, $"uri={uri}");
-            
             return uri;
         }
     }

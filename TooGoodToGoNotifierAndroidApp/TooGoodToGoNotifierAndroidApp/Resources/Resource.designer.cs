@@ -4188,29 +4188,32 @@ namespace TooGoodToGoNotifierAndroidApp
 			// aapt resource value: 0x7F0800F6
 			public const int useLogo = 2131230966;
 			
-			// aapt resource value: 0x7F0800F7
-			public const int usernameEditText = 2131230967;
-			
 			// aapt resource value: 0x7F0800F8
-			public const int view_offset_helper = 2131230968;
+			public const int usernameEditText = 2131230968;
+			
+			// aapt resource value: 0x7F0800F7
+			public const int userSubscribedCheckbox = 2131230967;
 			
 			// aapt resource value: 0x7F0800F9
-			public const int view_tree_lifecycle_owner = 2131230969;
+			public const int view_offset_helper = 2131230969;
 			
 			// aapt resource value: 0x7F0800FA
-			public const int view_tree_saved_state_registry_owner = 2131230970;
+			public const int view_tree_lifecycle_owner = 2131230970;
 			
 			// aapt resource value: 0x7F0800FB
-			public const int visible = 2131230971;
+			public const int view_tree_saved_state_registry_owner = 2131230971;
 			
 			// aapt resource value: 0x7F0800FC
-			public const int visible_removing_fragment_view_tag = 2131230972;
+			public const int visible = 2131230972;
 			
 			// aapt resource value: 0x7F0800FD
-			public const int withText = 2131230973;
+			public const int visible_removing_fragment_view_tag = 2131230973;
 			
 			// aapt resource value: 0x7F0800FE
-			public const int wrap_content = 2131230974;
+			public const int withText = 2131230974;
+			
+			// aapt resource value: 0x7F0800FF
+			public const int wrap_content = 2131230975;
 			
 			static Id()
 			{
@@ -4767,8 +4770,11 @@ namespace TooGoodToGoNotifierAndroidApp
 			// aapt resource value: 0x7F0E0041
 			public const int subscribe = 2131624001;
 			
+			// aapt resource value: 0x7F0E0043
+			public const int username = 2131624003;
+			
 			// aapt resource value: 0x7F0E0042
-			public const int username = 2131624002;
+			public const int user_subscribed_status = 2131624002;
 			
 			static String()
 			{

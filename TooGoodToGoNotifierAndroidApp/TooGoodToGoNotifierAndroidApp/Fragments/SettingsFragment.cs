@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Android.OS;
+using Android.Text.Style;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
@@ -20,6 +21,8 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
         private const string StopMonitoringKey = "stopMonitoring";
         private EditText _serverUrlEditText;
         private EditText _usernameEditText;
+        private CheckBox _userSubscribedCheckbox;
+        private ProductsClient _productsClient;
         private View _view;
 
         #endregion
@@ -30,6 +33,9 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
 
             _serverUrlEditText = _view.FindViewById<EditText>(Resource.Id.serverUrlEditText);
             _usernameEditText = _view.FindViewById<EditText>(Resource.Id.usernameEditText);
+            _userSubscribedCheckbox = _view.FindViewById<CheckBox>(Resource.Id.userSubscribedCheckbox);
+
+            _productsClient = new ProductsClient();
 
             FillEditTextWithDataIfAvailable();
             InitSubscribeButton(_view);
@@ -37,6 +43,20 @@ namespace TooGoodToGoNotifierAndroidApp.Fragments
             InitStopMonitoringButton(_view);
 
             return _view;
+        }
+
+        public override async void OnActivityCreated(Bundle savedInstanceState)
+        {
+            base.OnActivityCreated(savedInstanceState);
+
+            await InitUserSubscribedCheck(_view);
+        }
+
+        private async Task InitUserSubscribedCheck(View view)
+        {
+            var isUserSubscribed = await _productsClient.IsUserSubscribed();
+
+            _userSubscribedCheckbox.Checked = isUserSubscribed;
         }
 
         #region Utility Methods

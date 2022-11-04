@@ -20,5 +20,6 @@
 	<string name="stop_monitoring">Stop monitoring</string>
 	<string name="new_product_available_title">New product available</string>
 	<string name="new_product_available_text">Product available at %1$s€ in %2$s store</string>
+	<string name="user_subscribed_status">User subscribed status</string>
 
 </resources>
